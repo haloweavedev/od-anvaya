@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — OD Anvaya</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<%
+  const totalSubCount = 46;
+  const levelColors = { 1: '#ef4444', 2: '#f97316', 3: '#eab308', 4: '#22c55e' };
+%>
+<div style="min-height:100vh;background:var(--bg-base);font-family:var(--font-body)">
+  <!-- Admin header -->
+  <div style="padding:18px 40px;background:var(--bg-card);border-bottom:1px solid var(--border)" class="flex items-center justify-between">
+    <div class="flex items-center gap-14">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:1.07rem">♿</div>
+      <div>
+        <div class="mono" style="font-size:0.6rem;color:var(--accent);letter-spacing:0.2em">APD · OD TOOL</div>
+        <div style="font-size:1.07rem;font-weight:800;color:var(--text-primary)">Admin Dashboard</div>
+      </div>
+    </div>
+    <a href="/logout" class="btn btn-ghost btn-sm">LOG OUT</a>
+  </div>
+
+  <div style="padding:40px;max-width:960px;margin:0 auto">
+    <div class="flex justify-between items-center mb-28">
+      <div>
+        <div class="mono text-dim" style="font-size:0.73rem;letter-spacing:0.12em;margin-bottom:4px">PARTNER NGO OVERVIEW</div>
+        <h1>All Organisations</h1>
+      </div>
+    </div>
+
+    <% if (orgs.length === 0) { %>
+    <div class="card text-center" style="border-style:dashed;padding:48px">
+      <div style="font-size:2.13rem;margin-bottom:12px">🏢</div>
+      <div class="text-dim" style="font-size:1rem">No partner NGOs registered yet.</div>
+    </div>
+    <% } else { %>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+      <% for (const org of orgs) {
+        const pct = totalSubCount ? Math.round(((parseInt(org.rated_count) || 0) / totalSubCount) * 100) : 0;
+        const avgScore = org.avg_score ? parseFloat(org.avg_score) : null;
+        const avgColor = avgScore ? levelColors[Math.round(avgScore)] : 'var(--text-dim)';
+      %>
+      <a href="/report/<%= org.id %>" class="card" style="cursor:pointer;text-decoration:none;transition:border-color 0.15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div class="flex justify-between items-start mb-14">
+          <div>
+            <div style="font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:4px"><%= org.org_name %></div>
+            <div class="mono text-dim" style="font-size:0.73rem"><%= org.email %></div>
+          </div>
+          <% if (avgScore) { %>
+          <span class="mono" style="font-size:1.2rem;font-weight:800;color:<%= avgColor %>"><%= avgScore.toFixed(1) %></span>
+          <% } %>
+        </div>
+        <div class="mb-10">
+          <div class="flex justify-between mono text-dim" style="font-size:0.67rem;margin-bottom:5px">
+            <span>Assessment Progress</span><span><%= org.rated_count || 0 %>/<%= totalSubCount %> rated</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" style="width:<%= pct %>%;background:<%= pct === 100 ? 'var(--level-4)' : pct > 50 ? 'var(--level-3)' : 'var(--accent)' %>"></div>
+          </div>
+        </div>
+        <div class="mono" style="font-size:0.67rem;color:var(--accent);font-weight:700">VIEW ASSESSMENT →</div>
+      </a>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+</div>
+</body>
+</html>

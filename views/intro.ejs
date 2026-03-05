@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OD Anvaya — Partner NGO Assessment Tool</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<%
+  const allSubs = capabilities.flatMap(c => c.subcapabilities);
+  const totalSubCount = allSubs.length;
+  const ratedSubCount = 0;
+%>
+<div class="app-shell">
+  <%- include('partials/sidebar', { page: 'home', totalSubCount, ratedSubCount }) %>
+  <div class="main-content no-pad">
+
+    <!-- Hero -->
+    <div class="hero" style="background:var(--bg-base)">
+      <div class="hero-grid"></div>
+      <div class="hero-orb" style="top:15%;left:10%;width:320px;height:320px;background:radial-gradient(circle,rgba(99,202,183,0.18),transparent 70%)"></div>
+      <div class="hero-orb" style="bottom:20%;right:8%;width:280px;height:280px;background:radial-gradient(circle,rgba(99,102,241,0.18),transparent 70%)"></div>
+      <div class="hero-orb" style="top:50%;right:20%;width:200px;height:200px;background:radial-gradient(circle,rgba(14,165,233,0.12),transparent 70%)"></div>
+
+      <div class="apd-badge mb-28">
+        <div class="icon">♿</div>
+        <span class="text">ASSOCIATION OF PEOPLE WITH DISABILITY</span>
+      </div>
+
+      <div class="text-center mb-24" style="max-width:760px">
+        <h1 style="font-size:clamp(36px,5vw,64px);font-weight:900;line-height:1.1;letter-spacing:-0.03em">
+          <span style="color:var(--text-primary)">Partner NGO</span><br>
+          <span class="gradient-text">Organisation Development</span><br>
+          <span style="color:var(--text-primary)">Assessment Tool</span>
+        </h1>
+      </div>
+
+      <div class="text-center mb-48" style="max-width:600px">
+        <p style="color:var(--text-muted);font-size:1.13rem;line-height:1.8">
+          A structured tool to help APD's partner NGOs assess their organisational strengths, identify capability gaps, and co-create a prioritised development plan — together.
+        </p>
+      </div>
+
+      <div class="flex gap-16 flex-wrap justify-center mb-48">
+        <a href="/setup" class="btn btn-gradient btn-lg" style="box-shadow:0 8px 32px rgba(99,202,183,0.25)">BEGIN ASSESSMENT →</a>
+        <a href="#how" class="btn btn-ghost btn-lg">HOW IT WORKS ↓</a>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-8" style="max-width:700px">
+        <% for (const cap of capabilities) { %>
+        <div class="capability-pill"><span><%= cap.icon %></span><%= cap.name.split(' ').slice(0,2).join(' ') %></div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Why OD -->
+    <div id="how" class="section" style="background:var(--bg-primary)">
+      <div class="text-center mb-48">
+        <div class="section-label">WHY THIS MATTERS</div>
+        <h2 style="font-size:2.4rem">Strong Organisations,<br><span class="text-accent">Stronger Impact</span></h2>
+        <p style="color:var(--text-dim);font-size:1rem;line-height:1.8;max-width:640px;margin:20px auto 0">
+          APD believes that sustainable impact for persons with disability begins with the organisations that serve them. This tool enables APD and its partner NGOs to take an honest, structured look at where they stand — and chart a clear path forward together.
+        </p>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+        <% const whyCards = [
+          { icon: '🤝', title: 'Built for Collaboration', color: '#63cab7', desc: 'Designed to be done together — APD capacity-building staff and the partner NGO leadership complete this as a joint exercise, building shared understanding and ownership of the plan.' },
+          { icon: '🔍', title: 'Honest Self-Reflection', color: '#0ea5e9', desc: 'The 4-level rating scale is anchored to specific, real-world descriptions — not vague labels. Every rating is grounded in evidence, not aspiration.' },
+          { icon: '♿', title: 'DEI at the Centre', color: '#a78bfa', desc: 'Diversity, Equity & Inclusion is woven through 7 of the 13 capability areas, reflecting APD\'s commitment to building organisations that truly include and represent the communities they serve.' },
+          { icon: '🗺️', title: 'From Assessment to Action', color: '#f59e0b', desc: 'The tool doesn\'t stop at diagnosis. It guides you all the way to a timestamped, milestone-based action plan with owners, resources, and a Gantt timeline — ready to implement.' },
+        ]; %>
+        <% for (const c of whyCards) { %>
+        <div class="card" style="border-color:<%= c.color %>22">
+          <div style="width:44px;height:44px;border-radius:12px;background:<%= c.color %>18;border:1.5px solid <%= c.color %>44;display:flex;align-items:center;justify-content:center;font-size:1.33rem;margin-bottom:16px"><%= c.icon %></div>
+          <h3 style="margin-bottom:10px"><%= c.title %></h3>
+          <p style="font-size:0.87rem;color:var(--text-dim);line-height:1.8"><%= c.desc %></p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- 4 Step Process -->
+    <div class="section" style="background:var(--bg-base)">
+      <div class="text-center mb-48">
+        <div class="section-label">THE PROCESS</div>
+        <h2 style="font-size:2.4rem">Four Steps to a<br><span class="text-accent">Development Plan</span></h2>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;position:relative">
+        <div style="position:absolute;top:36px;left:12.5%;right:12.5%;height:1px;background:linear-gradient(to right,#63cab744,#0ea5e944,#a78bfa44,#f59e0b44);z-index:0"></div>
+        <% const steps = [
+          { num: '01', icon: '⚙️', title: 'Setup', color: '#63cab7', desc: 'Enter the partner NGO\'s details — organisation name, lead assessor, date, and the purpose of this assessment.' },
+          { num: '02', icon: '🎯', title: 'Assess', color: '#0ea5e9', desc: 'Work through all 13 capability areas. Rate each sub-capability on a 4-point scale using detailed level descriptions as your guide.' },
+          { num: '03', icon: '📋', title: 'Plan', color: '#a78bfa', desc: 'For each gap identified, define milestones, assign owners, set target dates, list resources needed, and mark priorities.' },
+          { num: '04', icon: '📊', title: 'Report', color: '#f59e0b', desc: 'Generate a full visual report with radar chart, strengths & gaps analysis, Gantt timeline, and a consolidated action plan.' },
+        ]; %>
+        <% for (const s of steps) { %>
+        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 24px">
+          <div style="width:72px;height:72px;border-radius:50%;background:var(--bg-card);border:2px solid <%= s.color %>;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 0 24px <%= s.color %>33">
+            <span style="font-size:1.47rem"><%= s.icon %></span>
+          </div>
+          <div class="mono" style="font-size:0.73rem;color:<%= s.color %>;letter-spacing:0.15em;margin-bottom:6px;font-weight:700"><%= s.num %></div>
+          <h3 style="font-size:1.2rem;margin-bottom:10px"><%= s.title %></h3>
+          <p style="font-size:0.87rem;color:var(--text-dim);line-height:1.8"><%= s.desc %></p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Level Scale -->
+    <div class="section" style="background:var(--bg-primary)">
+      <div class="grid grid-2 gap-24" style="align-items:center">
+        <div>
+          <div class="section-label">THE RATING SCALE</div>
+          <h2 style="font-size:2.13rem;margin-bottom:16px">Four Levels of<br><span class="text-accent">Organisational Maturity</span></h2>
+          <p style="color:var(--text-dim);font-size:0.93rem;line-height:1.8;margin-bottom:12px">
+            Each of the 13 capabilities and their sub-capabilities are rated on a 4-point scale from Nascent to Advanced. Every level has a specific, plain-language description so there is no ambiguity.
+          </p>
+          <p style="color:var(--text-dim);font-size:0.93rem;line-height:1.8">
+            The goal is not to reach Level 4 everywhere — it's to be <em style="color:var(--text-secondary)">honest, strategic, and focused</em> on the areas that matter most for the NGO's mission.
+          </p>
+        </div>
+        <div class="flex flex-col gap-12">
+          <% const lvls = [
+            { l: 1, name: 'Nascent', color: '#ef4444', desc: 'Systems, policies or practices are absent or very basic. The organisation is largely reactive.' },
+            { l: 2, name: 'Emerging', color: '#f97316', desc: 'Some foundational elements exist but are inconsistent, incomplete, or not widely understood.' },
+            { l: 3, name: 'Developing', color: '#eab308', desc: 'Clear systems and practices are in place and mostly functioning, with some room for improvement.' },
+            { l: 4, name: 'Advanced', color: '#22c55e', desc: 'Robust, well-embedded practices that could serve as a model. Regularly reviewed and improved.' },
+          ]; %>
+          <% for (const lv of lvls) { %>
+          <div class="flex gap-16 items-start" style="padding:16px 20px;background:var(--bg-card);border:1px solid <%= lv.color %>33;border-radius:var(--radius-md)">
+            <div style="width:36px;height:36px;border-radius:8px;background:<%= lv.color %>20;border:2px solid <%= lv.color %>;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:800;color:<%= lv.color %>;font-size:0.93rem;flex-shrink:0">L<%= lv.l %></div>
+            <div>
+              <div style="font-weight:700;color:<%= lv.color %>;font-size:0.93rem;margin-bottom:4px"><%= lv.name %></div>
+              <div style="font-size:0.8rem;color:var(--text-dim);line-height:1.6"><%= lv.desc %></div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 Capabilities Grid -->
+    <div class="section" style="background:var(--bg-base)">
+      <div class="text-center mb-48">
+        <div class="section-label">WHAT YOU'LL ASSESS</div>
+        <h2 style="font-size:2.13rem">13 Organisational<br><span class="text-accent">Capability Areas</span></h2>
+        <p style="color:var(--text-dim);font-size:0.93rem;line-height:1.8;max-width:560px;margin:16px auto 0">
+          Areas marked with a DEI badge have explicit sub-capabilities focused on diversity, equity, and inclusion.
+        </p>
+      </div>
+      <div class="grid grid-auto gap-12">
+        <% for (const cap of capabilities) { %>
+        <% const deiCount = cap.subcapabilities.filter(s => s.is_dei).length; %>
+        <div class="card" style="border-color:<%= cap.color %>22;padding:18px 20px">
+          <div class="flex justify-between items-start mb-10">
+            <span style="font-size:1.47rem"><%= cap.icon %></span>
+            <% if (deiCount > 0) { %><span class="tag tag-dei">DEI</span><% } %>
+          </div>
+          <h3 style="font-size:0.87rem;margin-bottom:4px;line-height:1.3"><%= cap.name %></h3>
+          <div class="mono" style="font-size:0.67rem;color:<%= cap.color %>99"><%= cap.subcapabilities.length %> sub-capabilities</div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Attribution -->
+    <div style="padding:36px 10%;background:var(--bg-base);border-top:1px solid var(--bg-card)">
+      <div class="text-center">
+        <div class="mono" style="font-size:0.6rem;color:var(--text-ghost);letter-spacing:0.2em;margin-bottom:18px">CAPABILITY INDICATORS DEVELOPED BY</div>
+        <div class="flex items-center justify-center gap-20 flex-wrap" style="opacity:0.35">
+          <span style="font-size:0.73rem;font-weight:700;color:var(--text-secondary)">Bridgespan</span>
+          <div style="width:1px;height:16px;background:var(--border)"></div>
+          <span style="font-size:0.73rem;font-weight:600;color:var(--text-secondary)">dasra</span>
+          <div style="width:1px;height:16px;background:var(--border)"></div>
+          <span style="font-size:0.73rem;font-weight:600;color:#c9a84c">Dhwani Foundation</span>
+          <div style="width:1px;height:16px;background:var(--border)"></div>
+          <span style="font-size:0.73rem;font-weight:700;color:#e8460a">Samhita</span>
+          <div style="width:1px;height:16px;background:var(--border)"></div>
+          <span class="mono" style="font-size:0.73rem;font-weight:800;color:#4a9e3f;letter-spacing:0.04em">SATTVA</span>
+          <div style="width:1px;height:16px;background:var(--border)"></div>
+          <span style="font-size:0.67rem;font-weight:600;color:var(--text-secondary)">toolbox india</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="section text-center" style="background:var(--bg-primary)">
+      <div style="max-width:600px;margin:0 auto">
+        <div style="font-size:2.67rem;margin-bottom:20px">♿</div>
+        <h2 style="font-size:2.13rem;margin-bottom:16px">Ready to begin?</h2>
+        <p style="color:var(--text-dim);font-size:1rem;line-height:1.8;margin-bottom:36px">
+          Set aside 60–90 minutes with your partner NGO's leadership team. Have your organisation's key documents handy. Be honest, be collaborative, and focus on growth — not judgement.
+        </p>
+        <a href="/setup" class="btn btn-gradient btn-lg" style="box-shadow:0 8px 40px rgba(99,202,183,0.3)">START THE ASSESSMENT →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>

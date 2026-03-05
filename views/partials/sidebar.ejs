@@ -1,0 +1,56 @@
+<%
+  const navItems = [
+    { id: 'home', href: '/', step: '00', label: 'About', icon: '🏠' },
+    { id: 'setup', href: '/setup', step: '01', label: 'Setup', icon: '⚙️' },
+    { id: 'assess', href: '/assess', step: '02', label: 'Assess', icon: '🎯' },
+    { id: 'plan', href: '/plan', step: '03', label: 'Plan', icon: '📋' },
+    { id: 'report', href: '/report', step: '04', label: 'Report', icon: '📊' },
+  ];
+  const currentPage = typeof page !== 'undefined' ? page : '';
+  const totalSubs = typeof totalSubCount !== 'undefined' ? totalSubCount : 46;
+  const ratedCount = typeof ratedSubCount !== 'undefined' ? ratedSubCount : 0;
+  const pct = totalSubs > 0 ? Math.round((ratedCount / totalSubs) * 100) : 0;
+%>
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">APD · OD TOOL</div>
+    <div class="title">Partner NGO<br>OD Planner</div>
+  </div>
+
+  <% if (user && user.org_name) { %>
+  <div class="sidebar-org">
+    <div class="label">CURRENT NGO</div>
+    <div class="name"><%= user.org_name %></div>
+  </div>
+  <% } %>
+
+  <% for (const nav of navItems) { %>
+  <a href="<%= nav.href %>" class="nav-item <%= currentPage === nav.id ? 'active' : '' %>">
+    <div class="flex items-center gap-8">
+      <span class="nav-icon"><%= nav.icon %></span>
+      <div>
+        <div class="step"><%= nav.step %></div>
+        <div class="label"><%= nav.label %></div>
+      </div>
+    </div>
+  </a>
+  <% } %>
+
+  <div class="sidebar-footer">
+    <div class="progress-label">PROGRESS</div>
+    <div class="flex justify-between mb-6" style="font-family:var(--font-mono);font-size:0.73rem;color:var(--text-dim)">
+      <span>Rated</span>
+      <span style="color:var(--accent)"><%= ratedCount %>/<%= totalSubs %></span>
+    </div>
+    <div class="progress-bar mb-12">
+      <div class="progress-bar-fill" style="width:<%= pct %>%"></div>
+    </div>
+    <% if (user) { %>
+    <div class="sidebar-user">
+      <div class="user-org"><%= user.org_name %></div>
+      <div class="user-email"><%= user.email %></div>
+      <a href="/logout" class="btn btn-ghost btn-sm w-full" style="justify-content:center;margin-top:4px">LOG OUT</a>
+    </div>
+    <% } %>
+  </div>
+</div>

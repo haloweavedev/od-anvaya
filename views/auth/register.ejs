@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — OD Anvaya</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="auth-shell">
+  <div class="auth-brand">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div style="position:relative;text-align:center;max-width:380px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:1.87rem;margin:0 auto 24px">♿</div>
+      <div class="mono" style="font-size:0.67rem;color:var(--accent);letter-spacing:0.2em;margin-bottom:12px">ASSOCIATION OF PEOPLE WITH DISABILITY</div>
+      <h1 style="margin-bottom:16px">Partner NGO<br><span class="gradient-text">OD Assessment Tool</span></h1>
+      <p style="color:var(--text-dim);font-size:0.87rem;line-height:1.8">Register your organisation to begin the structured OD assessment across 13 capability areas.</p>
+    </div>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-title">Create your account</div>
+    <div class="auth-subtitle">Register your NGO to get started.</div>
+    <% if (error) { %><div class="auth-error"><%= error %></div><% } %>
+    <form method="POST" action="/register" style="display:flex;flex-direction:column;gap:16px">
+      <div class="form-group">
+        <label class="form-label">YOUR NAME</label>
+        <input type="text" name="name" class="form-input" placeholder="e.g. Priya Rajan" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ORGANISATION NAME</label>
+        <input type="text" name="orgName" class="form-input" placeholder="e.g. Vikalp Trust" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">EMAIL ADDRESS</label>
+        <input type="email" name="email" class="form-input" placeholder="you@ngo.org" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">PASSWORD</label>
+        <input type="password" name="password" class="form-input" placeholder="Min. 6 characters" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CONFIRM PASSWORD</label>
+        <input type="password" name="confirmPassword" class="form-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-gradient btn-lg w-full" style="justify-content:center">CREATE ACCOUNT →</button>
+    </form>
+    <div class="auth-switch">
+      Already registered? <a href="/login" style="font-weight:700">Sign in</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — OD Anvaya</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="auth-shell">
+  <div class="auth-brand">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div style="position:relative;text-align:center;max-width:380px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:1.87rem;margin:0 auto 24px">♿</div>
+      <div class="mono" style="font-size:0.67rem;color:var(--accent);letter-spacing:0.2em;margin-bottom:12px">ASSOCIATION OF PEOPLE WITH DISABILITY</div>
+      <h1 style="margin-bottom:16px">Partner NGO<br><span class="gradient-text">OD Assessment Tool</span></h1>
+      <p style="color:var(--text-dim);font-size:0.87rem;line-height:1.8">A structured platform for APD's partner organisations to assess capabilities, identify gaps, and build inclusive development plans.</p>
+      <div style="margin-top:36px;display:flex;flex-direction:column;gap:10px">
+        <% const features = ['13 Organisational Capabilities', '4-Level Maturity Scale', 'Milestone-Based Action Planning', 'DEI Integration', 'Gantt Timeline & Reports']; %>
+        <% for (const f of features) { %>
+        <div class="flex items-center gap-10" style="font-size:0.8rem;color:var(--text-dim)">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0"></div><%= f %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-subtitle">Sign in to continue your OD assessment.</div>
+    <% if (error) { %><div class="auth-error"><%= error %></div><% } %>
+    <form method="POST" action="/login" style="display:flex;flex-direction:column;gap:16px">
+      <div class="form-group">
+        <label class="form-label">EMAIL ADDRESS</label>
+        <input type="email" name="email" class="form-input" placeholder="you@ngo.org" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">PASSWORD</label>
+        <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-gradient btn-lg w-full" style="justify-content:center">SIGN IN →</button>
+    </form>
+    <div class="auth-switch">
+      New to the platform? <a href="/register" style="font-weight:700">Create an account</a>
+    </div>
+    <div class="auth-admin-hint">
+      <div class="mono" style="font-size:0.6rem;color:var(--text-ghost);letter-spacing:0.12em;margin-bottom:6px">APD ADMIN ACCESS</div>
+      <div style="font-size:0.73rem;color:var(--text-ghost)">admin@apd.org · contact APD for credentials</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

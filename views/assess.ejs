@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assess — OD Anvaya</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<%
+  const allSubs = capabilities.flatMap(c => c.subcapabilities);
+  const totalSubCount = allSubs.length;
+  const ratedSubCount = allSubs.filter(s => scores[s.id] && scores[s.id].current_level).length;
+  const cap = capabilities[activeCap] || capabilities[0];
+  const levelNames = { 1: 'Nascent', 2: 'Emerging', 3: 'Developing', 4: 'Advanced' };
+  const levelColors = { 1: '#ef4444', 2: '#f97316', 3: '#eab308', 4: '#22c55e' };
+
+  function capAvg(c) {
+    const vals = c.subcapabilities.map(s => scores[s.id]?.current_level).filter(Boolean);
+    return vals.length ? (vals.reduce((a,b) => a+b, 0) / vals.length) : null;
+  }
+%>
+<div class="app-shell">
+  <%- include('partials/sidebar', { page: 'assess', totalSubCount, ratedSubCount }) %>
+  <div class="main-content">
+    <h1 class="mb-6">Capability Assessment</h1>
+    <div class="mono text-muted mb-20" style="font-size:0.87rem">Rate each sub-capability from Level 1–4 · <%= ratedSubCount %>/<%= totalSubCount %> assessed</div>
+    <div class="progress-bar mb-32">
+      <div class="progress-bar-fill" style="width:<%= Math.round((ratedSubCount/totalSubCount)*100) %>%"></div>
+    </div>
+
+    <div class="flex gap-24">
+      <!-- Left: capability nav -->
+      <div style="width:240px;flex-shrink:0">
+        <div class="mb-14">
+          <a href="?cap=<%= activeCap %>&dei=1" class="btn btn-sm btn-outline-accent">FILTER: DEI</a>
+        </div>
+        <div style="overflow-y:auto;max-height:calc(100vh - 250px)">
+          <% capabilities.forEach((c, i) => {
+            const avg = capAvg(c);
+            const rated = c.subcapabilities.filter(s => scores[s.id]?.current_level).length;
+            const isActive = i === activeCap;
+            const avgColor = avg ? levelColors[Math.round(avg)] : 'var(--text-dim)';
+          %>
+          <a href="?cap=<%= i %>" class="cap-card <%= isActive ? 'active' : '' %>" style="<%= isActive ? 'border-color:'+c.color+'88' : '' %>">
+            <div class="flex items-center gap-8 mb-6">
+              <span class="cap-icon"><%= c.icon %></span>
+              <div class="cap-name"><%= c.name %></div>
+            </div>
+            <div class="flex items-center gap-8">
+              <div class="progress-bar flex-1" style="height:3px">
+                <div class="progress-bar-fill" style="width:<%= avg ? (avg/4*100) : 0 %>%;background:<%= avgColor %>"></div>
+              </div>
+              <span class="cap-stat" style="width:28px;color:<%= avgColor %>"><%= avg ? avg.toFixed(1) : rated + '/' + c.subcapabilities.length %></span>
+            </div>
+          </a>
+          <% }); %>
+        </div>
+      </div>
+
+      <!-- Right: sub-capability cards -->
+      <div class="flex-1">
+        <!-- Cap header -->
+        <div class="card mb-16" style="border-color:<%= cap.color %>44">
+          <div class="flex items-center gap-16">
+            <span style="font-size:1.87rem"><%= cap.icon %></span>
+            <div class="flex-1">
+              <h2 style="font-size:1.33rem"><%= cap.name %></h2>
+              <div class="mono text-muted" style="font-size:0.8rem;margin-top:2px">
+                <%= cap.subcapabilities.filter(s => scores[s.id]?.current_level).length %>/<%= cap.subcapabilities.length %> sub-capabilities rated
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <% for (const sub of cap.subcapabilities) {
+          const score = scores[sub.id];
+          const current = score?.current_level;
+          const borderColor = current ? levelColors[current] + '44' : 'var(--border)';
+        %>
+        <div class="sub-card" style="border-color:<%= borderColor %>" id="sub-<%= sub.id %>">
+          <!-- Header -->
+          <div class="flex items-start justify-between mb-16 gap-12">
+            <div class="flex-1">
+              <h3 style="font-size:1rem;margin-bottom:6px"><%= sub.name %></h3>
+              <div class="flex gap-8 flex-wrap">
+                <% if (sub.is_dei) { %><span class="tag tag-dei">DEI INDICATOR</span><% } %>
+                <% if (current) { %><%- include('partials/level-badge', { level: current }) %><% } %>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-accent" onclick="showLevelGuide('<%= sub.id %>')">📖 VIEW DESCRIPTIONS</button>
+          </div>
+
+          <!-- Level selector -->
+          <div class="mb-16">
+            <div class="form-label mb-10">SELECT CURRENT LEVEL</div>
+            <div class="level-grid">
+              <% for (let lvl = 1; lvl <= 4; lvl++) { %>
+              <div class="level-option <%= current === lvl ? 'active' : '' %>"
+                   style="border-color:<%= current === lvl ? levelColors[lvl] : levelColors[lvl]+'44' %>;background:<%= current === lvl ? levelColors[lvl]+'11' : 'var(--bg-input)' %>"
+                   onclick="setScore('<%= sub.id %>', <%= lvl %>, <%= current === lvl ? 'true' : 'false' %>)">
+                <div class="flex items-center gap-6 mb-6">
+                  <div class="level-num" style="background:<%= levelColors[lvl] %>22;border:1.5px solid <%= levelColors[lvl] %>;color:<%= levelColors[lvl] %>">L<%= lvl %></div>
+                  <span class="level-name" style="color:<%= levelColors[lvl] %>"><%= levelNames[lvl] %></span>
+                </div>
+                <div class="level-preview"><%= sub.levels[lvl] ? sub.levels[lvl].split('.')[0] + '.' : '' %></div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <div class="form-label">ASSESSMENT NOTES <span class="text-dim">(optional)</span></div>
+            <textarea class="form-textarea" placeholder="Evidence for this rating, observations, context..."
+              onchange="saveNotes('<%= sub.id %>', this.value)"
+            ><%= score?.field_notes || '' %></textarea>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Nav buttons -->
+        <div class="flex justify-between" style="margin-top:8px;padding-bottom:24px">
+          <% if (activeCap > 0) { %>
+          <a href="?cap=<%= activeCap - 1 %>" class="btn btn-secondary">← PREV</a>
+          <% } else { %>
+          <div></div>
+          <% } %>
+          <% if (activeCap < capabilities.length - 1) { %>
+          <a href="?cap=<%= activeCap + 1 %>" class="btn btn-primary">NEXT → <%= capabilities[activeCap+1].icon %> <%= capabilities[activeCap+1].name.split(' ')[0] %>...</a>
+          <% } else { %>
+          <a href="/plan" class="btn btn-primary">GO TO ACTION PLAN →</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Guide Modal (hidden, populated by JS) -->
+    <div id="level-guide-modal" class="modal-overlay" style="display:none" onclick="closeLevelGuide()">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div style="padding:24px 28px;border-bottom:1px solid var(--border)" class="flex justify-between items-start">
+          <div>
+            <div class="mono text-muted" style="font-size:0.73rem;letter-spacing:0.12em;margin-bottom:4px">LEVEL DESCRIPTIONS</div>
+            <h2 id="modal-sub-name" style="font-size:1.2rem"></h2>
+            <div id="modal-dei-tag"></div>
+          </div>
+          <button onclick="closeLevelGuide()" style="background:none;border:none;color:var(--text-muted);font-size:1.47rem;cursor:pointer;line-height:1">×</button>
+        </div>
+        <div id="modal-levels" style="padding:28px"></div>
+        <div style="padding:16px 28px;border-top:1px solid var(--border);text-align:center">
+          <div class="mono text-dim" style="font-size:0.73rem">Click any level above to select it · Source: Bridgespan Group OD Assessment Guide</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Embed capability data for JS
+  const CAPABILITIES = <%- JSON.stringify(capabilities) %>;
+  const SCORES = <%- JSON.stringify(scores) %>;
+  const LEVEL_COLORS = { 1: '#ef4444', 2: '#f97316', 3: '#eab308', 4: '#22c55e' };
+  const LEVEL_BG = { 1: '#7f1d1d', 2: '#431407', 3: '#422006', 4: '#052e16' };
+  const LEVEL_NAMES = { 1: 'Nascent', 2: 'Emerging', 3: 'Developing', 4: 'Advanced' };
+</script>
+<script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report — OD Anvaya</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<%
+  const allSubs = capabilities.flatMap(c => c.subcapabilities);
+  const totalSubCount = allSubs.length;
+  const ratedSubCount = allSubs.filter(s => scores[s.id] && scores[s.id].current_level).length;
+  const levelColors = { 1: '#ef4444', 2: '#f97316', 3: '#eab308', 4: '#22c55e' };
+  const levelNames = { 1: 'Nascent', 2: 'Emerging', 3: 'Developing', 4: 'Advanced' };
+  const priorityConfig = {
+    Critical: { color: '#ef4444', icon: '🔴' },
+    High: { color: '#f97316', icon: '🟠' },
+    Medium: { color: '#3b82f6', icon: '🔵' },
+    Low: { color: '#6b7280', icon: '⚪' },
+  };
+
+  // Compute stats
+  const ratedVals = allSubs.map(s => scores[s.id]?.current_level).filter(Boolean);
+  const overallAvg = ratedVals.length ? (ratedVals.reduce((a,b)=>a+b,0)/ratedVals.length) : null;
+  const criticalCount = allSubs.filter(s => scores[s.id]?.priority === 'Critical').length;
+
+  // Cap stats
+  const capStats = capabilities.map(cap => {
+    const vals = cap.subcapabilities.map(s => scores[s.id]?.current_level).filter(Boolean);
+    const avg = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+    return { ...cap, avg, rated: vals.length };
+  });
+
+  // Action items
+  const actionItems = allSubs
+    .filter(s => {
+      const sc = scores[s.id];
+      return sc && (sc.timeline_start || sc.resources || (milestones[sc.id] && milestones[sc.id].length > 0));
+    })
+    .map(s => {
+      const sc = scores[s.id];
+      const cap = capabilities.find(c => c.subcapabilities.some(x => x.id === s.id));
+      return { ...s, score: sc, cap, mils: milestones[sc.id] || [] };
+    })
+    .sort((a, b) => {
+      const o = { Critical: 0, High: 1, Medium: 2, Low: 3 };
+      return (o[a.score.priority] ?? 9) - (o[b.score.priority] ?? 9);
+    });
+
+  // Strengths & Gaps
+  const strengths = allSubs.filter(s => scores[s.id]?.current_level >= 3).slice(0, 8);
+  const gaps = allSubs
+    .filter(s => scores[s.id]?.current_level && scores[s.id].current_level < 3)
+    .sort((a, b) => (scores[a.id]?.current_level || 0) - (scores[b.id]?.current_level || 0))
+    .slice(0, 8);
+
+  // Gantt items
+  const ganttItems = actionItems.filter(i => i.score.timeline_start && i.score.timeline_end && new Date(i.score.timeline_end) > new Date(i.score.timeline_start));
+  const allDates = ganttItems.flatMap(i => [new Date(i.score.timeline_start), new Date(i.score.timeline_end)]);
+  const ganttMin = allDates.length ? new Date(Math.min(...allDates)) : null;
+  const ganttMax = allDates.length ? new Date(Math.max(...allDates)) : null;
+  const ganttSpan = ganttMin && ganttMax ? ganttMax - ganttMin : 0;
+%>
+<div class="app-shell">
+  <%- include('partials/sidebar', { page: 'report', totalSubCount, ratedSubCount }) %>
+  <div class="main-content">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-32 flex-wrap gap-16">
+      <div>
+        <div class="mono text-muted" style="font-size:0.73rem;letter-spacing:0.12em;margin-bottom:6px">OD ASSESSMENT REPORT</div>
+        <h1 style="margin-bottom:4px"><%= assessment.org_name || 'Organisation' %></h1>
+        <div class="mono text-muted" style="font-size:0.87rem">Assessed by <%= assessment.assessor || '—' %> · <%= assessment.assessment_date ? new Date(assessment.assessment_date).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '' %></div>
+        <% if (assessment.context_notes) { %>
+        <div style="font-size:0.87rem;color:var(--text-dim);margin-top:6px;max-width:600px">Context: <%= assessment.context_notes %></div>
+        <% } %>
+      </div>
+      <button onclick="window.print()" class="btn btn-ghost">⬇ PRINT REPORT</button>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="grid grid-4 gap-14 mb-28">
+      <div class="stat-card">
+        <div class="stat-num" style="color:<%= overallAvg ? levelColors[Math.round(overallAvg)] : 'var(--text-dim)' %>"><%= overallAvg ? overallAvg.toFixed(2) : '—' %></div>
+        <div class="stat-label">OVERALL AVERAGE</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--accent-blue)"><%= ratedSubCount %>/<%= totalSubCount %></div>
+        <div class="stat-label">SUB-CAPS RATED</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--level-1)"><%= criticalCount %></div>
+        <div class="stat-label">CRITICAL ITEMS</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--accent)"><%= actionItems.length %></div>
+        <div class="stat-label">ACTION ITEMS</div>
+      </div>
+    </div>
+
+    <!-- Radar + Scores -->
+    <div class="flex gap-20 mb-28 flex-wrap">
+      <div class="card flex-shrink-0" style="min-width:280px">
+        <div class="form-label mb-16">CAPABILITY RADAR</div>
+        <div id="radar-chart" style="text-align:center"></div>
+        <div class="flex flex-wrap gap-12" style="margin-top:12px">
+          <% for (const cap of capabilities) { %>
+          <div class="flex gap-4 items-center mono" style="font-size:0.6rem;color:var(--text-dim)">
+            <span><%= cap.icon %></span><%= cap.id %>. <%= cap.name.split(' ')[0] %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <div class="card flex-1" style="min-width:280px">
+        <div class="form-label mb-20">CAPABILITY SCORES</div>
+        <% for (const cs of capStats) { %>
+        <div class="mb-14">
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex gap-8 items-center">
+              <span style="font-size:0.87rem"><%= cs.icon %></span>
+              <span style="font-size:0.8rem;color:var(--text-secondary)"><%= cs.name %></span>
+            </div>
+            <div class="flex gap-8 items-center">
+              <span class="mono text-dim" style="font-size:0.67rem"><%= cs.rated %>/<%= cs.subcapabilities.length %></span>
+              <% if (cs.avg) { %>
+              <span class="mono" style="font-size:0.87rem;font-weight:800;color:<%= levelColors[Math.round(cs.avg)] %>"><%= cs.avg.toFixed(1) %></span>
+              <% } %>
+            </div>
+          </div>
+          <div class="progress-bar" style="height:6px">
+            <div class="progress-bar-fill" style="width:<%= cs.avg ? (cs.avg/4*100) : 0 %>%;background:<%= cs.avg ? levelColors[Math.round(cs.avg)] : 'var(--text-dim)' %>"></div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Strengths & Gaps -->
+    <div class="grid grid-2 gap-16 mb-28">
+      <div class="card" style="border-color:var(--level-4-bg)">
+        <div class="mono mb-16" style="font-size:0.73rem;color:var(--level-4);letter-spacing:0.1em">✓ STRENGTHS (Level 3–4)</div>
+        <% if (strengths.length === 0) { %>
+        <div class="text-dim" style="font-size:0.87rem">No Level 3–4 scores yet. Complete the assessment.</div>
+        <% } %>
+        <% for (const s of strengths) {
+          const cap = capabilities.find(c => c.subcapabilities.some(x => x.id === s.id));
+        %>
+        <div class="flex justify-between items-center mb-8" style="padding:8px 12px;background:var(--bg-input);border-radius:var(--radius-sm)">
+          <div style="font-size:0.8rem;color:var(--text-secondary)"><span class="mr-6"><%= cap.icon %></span><%= s.name %></div>
+          <%- include('partials/level-badge', { level: scores[s.id].current_level, size: 'sm' }) %>
+        </div>
+        <% } %>
+      </div>
+      <div class="card" style="border-color:var(--level-1-bg)">
+        <div class="mono mb-16" style="font-size:0.73rem;color:var(--level-1);letter-spacing:0.1em">⚠ TOP GAPS (Level 1–2)</div>
+        <% if (gaps.length === 0) { %>
+        <div class="text-dim" style="font-size:0.87rem">No gaps identified yet.</div>
+        <% } %>
+        <% for (const s of gaps) {
+          const cap = capabilities.find(c => c.subcapabilities.some(x => x.id === s.id));
+          const gap = 4 - scores[s.id].current_level;
+        %>
+        <div class="flex justify-between items-center mb-8" style="padding:8px 12px;background:var(--bg-input);border-radius:var(--radius-sm)">
+          <div style="font-size:0.8rem;color:var(--text-secondary)"><span class="mr-6"><%= cap.icon %></span><%= s.name %></div>
+          <div class="flex gap-8 items-center">
+            <%- include('partials/level-badge', { level: scores[s.id].current_level, size: 'sm' }) %>
+            <span class="mono" style="font-size:0.67rem;color:var(--level-1)">gap <%= gap %></span>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Gantt Chart -->
+    <% if (ganttItems.length > 0) { %>
+    <div class="card mb-28" style="border-color:var(--border-accent)">
+      <div class="mono mb-20" style="font-size:0.73rem;color:var(--accent-blue);letter-spacing:0.1em">📅 IMPLEMENTATION TIMELINE — GANTT VIEW</div>
+      <div id="gantt-chart"></div>
+    </div>
+    <% } %>
+
+    <!-- Consolidated Action Plan -->
+    <% if (actionItems.length > 0) { %>
+    <div class="card mb-28">
+      <div class="form-label mb-20">CONSOLIDATED ACTION PLAN — <%= actionItems.length %> ITEMS</div>
+      <div class="overflow-x-auto">
+        <table class="action-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Capability</th><th>Sub-Capability</th><th>Current</th><th>Target</th><th>Gap</th><th>Priority</th><th>Owner</th><th>Start</th><th>End</th><th>Resources</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% actionItems.forEach((item, i) => {
+              const sc = item.score;
+              const gap = sc.current_level && sc.target_level ? sc.target_level - sc.current_level : null;
+              const pc = sc.priority ? priorityConfig[sc.priority] : null;
+            %>
+            <tr>
+              <td class="mono text-dim" style="font-size:0.73rem"><%= i + 1 %></td>
+              <td class="whitespace-nowrap"><span style="color:<%= item.cap.color %>" class="mr-6"><%= item.cap.icon %></span><span class="text-muted" style="font-size:0.73rem"><%= item.cap.name.split(' ')[0] %></span></td>
+              <td style="color:var(--text-secondary);font-weight:600;white-space:nowrap">
+                <%= item.name %>
+                <% if (item.is_dei) { %><span class="tag tag-dei" style="margin-left:6px">DEI</span><% } %>
+              </td>
+              <td><%- include('partials/level-badge', { level: sc.current_level, size: 'sm' }) %></td>
+              <td><%- include('partials/level-badge', { level: sc.target_level, size: 'sm' }) %></td>
+              <td class="mono" style="font-size:0.8rem;color:<%= gap > 0 ? 'var(--level-4)' : gap < 0 ? 'var(--level-1)' : 'var(--text-dim)' %>"><%= gap !== null ? (gap > 0 ? '+'+gap : gap) : '—' %></td>
+              <td class="whitespace-nowrap"><% if (pc) { %><span class="mono" style="font-size:0.73rem;font-weight:700;color:<%= pc.color %>"><%= pc.icon %> <%= sc.priority %></span><% } %></td>
+              <td class="mono text-muted" style="font-size:0.8rem;white-space:nowrap"><%= sc.timeline_owner || '—' %></td>
+              <td class="mono text-muted" style="font-size:0.73rem;white-space:nowrap"><%= sc.timeline_start ? new Date(sc.timeline_start).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : '—' %></td>
+              <td class="mono text-muted" style="font-size:0.73rem;white-space:nowrap"><%= sc.timeline_end ? new Date(sc.timeline_end).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : '—' %></td>
+              <td style="min-width:200px;max-width:260px">
+                <% if (sc.resources) { %>
+                <div class="flex flex-wrap gap-4">
+                  <% sc.resources.split(/[·•,\n]/).map(t => t.trim()).filter(Boolean).forEach(tag => { %>
+                  <span class="resource-tag"><%= tag %></span>
+                  <% }); %>
+                </div>
+                <% } else { %><span class="text-ghost">—</span><% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="card text-center mb-28" style="border-style:dashed;padding:40px">
+      <div style="font-size:1.6rem;margin-bottom:12px">📋</div>
+      <div class="text-muted" style="font-size:1rem">No action plans written yet.</div>
+      <a href="/plan" class="btn btn-primary" style="margin-top:16px">GO TO ACTION PLANNING →</a>
+    </div>
+    <% } %>
+
+    <!-- Footer nav -->
+    <div class="flex gap-12" style="padding-bottom:40px">
+      <a href="/plan" class="btn btn-secondary">← EDIT PLAN</a>
+      <a href="/assess" class="btn btn-secondary">← EDIT ASSESSMENT</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const CAPABILITIES = <%- JSON.stringify(capabilities) %>;
+  const SCORES = <%- JSON.stringify(scores) %>;
+  const CAP_STATS = <%- JSON.stringify(capStats) %>;
+  const GANTT_ITEMS = <%- JSON.stringify(ganttItems.map(i => ({ name: i.name, icon: i.cap.icon, color: i.cap.color, priority: i.score.priority, start: i.score.timeline_start, end: i.score.timeline_end, owner: i.score.timeline_owner }))) %>;
+  const GANTT_MIN = '<%= ganttMin ? ganttMin.toISOString() : '' %>';
+  const GANTT_MAX = '<%= ganttMax ? ganttMax.toISOString() : '' %>';
+</script>
+<script src="/js/app.js"></script>
+<script src="/js/radar.js"></script>
+<script src="/js/gantt.js"></script>
+</body>
+</html>
