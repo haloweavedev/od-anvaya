@@ -38,6 +38,11 @@ app.use('/', require('./routes/assessment'));
 app.use('/', require('./routes/report'));
 app.use('/admin', require('./routes/admin'));
 
-app.listen(PORT, () => {
-  console.log(`OD Anvaya running on http://localhost:${PORT}`);
-});
+// Local dev: listen on port. Vercel: export the app.
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  app.listen(PORT, () => {
+    console.log(`OD Anvaya running on http://localhost:${PORT}`);
+  });
+}
