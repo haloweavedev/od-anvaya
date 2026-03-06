@@ -23,7 +23,7 @@ function initRadar() {
     return avg(cap.subcapabilities.map(function(s) { return SCORES[s.id] ? SCORES[s.id].current_level : 0; }));
   });
 
-  let svg = '<svg width="'+size+'" height="'+size+'">';
+  let svg = '<svg viewBox="0 0 '+size+' '+size+'" style="width:100%;max-width:'+size+'px;height:auto">';
 
   // Grid
   for (let l = 1; l <= 4; l++) {

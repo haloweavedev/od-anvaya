@@ -101,10 +101,10 @@
     </div>
 
     <!-- Radar + Scores -->
-    <div class="flex gap-20 mb-28 flex-wrap">
-      <div class="card flex-shrink-0" style="min-width:280px">
+    <div style="display:grid;grid-template-columns:minmax(0,320px) 1fr;gap:20px" class="mb-28">
+      <div class="card" style="max-width:320px">
         <div class="form-label mb-16">CAPABILITY RADAR</div>
-        <div id="radar-chart" style="text-align:center"></div>
+        <div id="radar-chart" style="text-align:center;max-width:100%;overflow:hidden"></div>
         <div class="flex flex-wrap gap-12" style="margin-top:12px">
           <% for (const cap of capabilities) { %>
           <div class="flex gap-4 items-center mono" style="font-size:0.7rem;color:var(--text-dim)">
@@ -113,7 +113,7 @@
           <% } %>
         </div>
       </div>
-      <div class="card flex-1" style="min-width:280px">
+      <div class="card" style="min-width:0">
         <div class="form-label mb-20">CAPABILITY SCORES</div>
         <% for (const cs of capStats) { %>
         <div class="mb-14">
