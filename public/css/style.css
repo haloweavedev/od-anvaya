@@ -335,6 +335,26 @@ h3 { font-size: 1.13rem; font-weight: 700; }
 .form-input:focus, .form-textarea:focus, .form-select:focus {
   border-color: var(--accent);
 }
+.input-eye-wrap {
+  position: relative;
+}
+.input-eye-wrap .form-input {
+  padding-right: 40px;
+}
+.eye-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+.eye-toggle:hover { color: var(--text-muted); }
 .form-textarea {
   resize: vertical;
   min-height: 72px;
