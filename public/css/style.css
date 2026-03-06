@@ -99,9 +99,9 @@ h3 { font-size: 1.13rem; font-weight: 700; }
 }
 
 .sidebar-logo {
-  padding: 0 16px 16px;
+  padding: 0 16px 10px;
   border-bottom: 1px solid var(--bg-card);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 .sidebar-logo .brand {
   font-family: var(--font-mono);
@@ -119,9 +119,9 @@ h3 { font-size: 1.13rem; font-weight: 700; }
 }
 
 .sidebar-org {
-  padding: 0 16px 12px;
+  padding: 0 16px 8px;
   border-bottom: 1px solid var(--bg-card);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .sidebar-org .label {
   font-family: var(--font-mono);
@@ -139,7 +139,7 @@ h3 { font-size: 1.13rem; font-weight: 700; }
 
 .nav-item {
   display: block;
-  padding: 10px 16px;
+  padding: 7px 16px;
   cursor: pointer;
   border-left: 3px solid transparent;
   transition: all 0.15s;
@@ -194,41 +194,95 @@ h3 { font-size: 1.13rem; font-weight: 700; }
 }
 
 .sidebar-footer {
-  margin-top: auto;
-  padding: 12px 16px;
+  padding: 8px 12px;
   border-top: 1px solid var(--bg-card);
   flex-shrink: 0;
 }
-.sidebar-footer .progress-label {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-dim);
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
+.sidebar-footer .user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.sidebar-user {
-  padding: 8px 10px;
-  background: var(--bg-input);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
+.sidebar-footer .user-row .user-info {
+  flex: 1;
+  min-width: 0;
 }
-.sidebar-user .user-org {
+.sidebar-footer .user-row .user-org {
   font-size: 0.67rem;
   font-weight: 600;
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-bottom: 2px;
 }
-.sidebar-user .user-email {
-  font-size: 0.6rem;
+.sidebar-footer .user-row .user-email {
+  font-size: 0.57rem;
   font-family: var(--font-mono);
   color: var(--text-dim);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-bottom: 8px;
+}
+/* Progress hover badge */
+.progress-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: default;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.progress-badge .progress-ring {
+  width: 14px;
+  height: 14px;
+}
+.progress-badge .progress-ring circle {
+  fill: none;
+  stroke-width: 2.5;
+}
+.progress-badge .progress-ring .ring-bg {
+  stroke: var(--border);
+}
+.progress-badge .progress-ring .ring-fill {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.3s;
+}
+.progress-badge .progress-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  min-width: 160px;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.progress-badge:hover .progress-tooltip {
+  display: block;
+}
+.progress-badge .progress-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--border);
 }
 
 .main-content {

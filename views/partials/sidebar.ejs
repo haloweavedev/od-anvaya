@@ -79,19 +79,28 @@
   <% } %>
 
   <div class="sidebar-footer">
-    <div class="progress-label">PROGRESS</div>
-    <div class="flex justify-between mb-6" style="font-family:var(--font-mono);font-size:0.73rem;color:var(--text-dim)">
-      <span>Rated</span>
-      <span style="color:var(--accent)"><%= ratedCount %>/<%= totalSubs %></span>
-    </div>
-    <div class="progress-bar mb-12">
-      <div class="progress-bar-fill" style="width:<%= pct %>%"></div>
-    </div>
     <% if (user) { %>
-    <div class="sidebar-user">
-      <div class="user-org"><%= user.org_name %></div>
-      <div class="user-email"><%= user.email %></div>
-      <a href="/logout" class="btn btn-ghost btn-sm w-full" style="justify-content:center;margin-top:4px">LOG OUT</a>
+    <div class="user-row">
+      <div class="user-info">
+        <div class="user-org"><%= user.org_name %></div>
+        <div class="user-email"><%= user.email %></div>
+      </div>
+      <% const circ = 2 * Math.PI * 5.5; const dash = circ - (pct / 100) * circ; %>
+      <div class="progress-badge">
+        <svg class="progress-ring" viewBox="0 0 14 14">
+          <circle class="ring-bg" cx="7" cy="7" r="5.5"/>
+          <circle class="ring-fill" cx="7" cy="7" r="5.5" stroke-dasharray="<%= circ %>" stroke-dashoffset="<%= dash %>"/>
+        </svg>
+        <%= pct %>%
+        <div class="progress-tooltip">
+          <div style="font-size:0.6rem;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:6px">PROGRESS</div>
+          <div style="font-size:0.8rem;color:var(--accent);font-weight:700;margin-bottom:6px"><%= ratedCount %> / <%= totalSubs %> rated</div>
+          <div class="progress-bar" style="height:4px">
+            <div class="progress-bar-fill" style="width:<%= pct %>%"></div>
+          </div>
+        </div>
+      </div>
+      <a href="/logout" class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:0.6rem">OUT</a>
     </div>
     <% } %>
   </div>
