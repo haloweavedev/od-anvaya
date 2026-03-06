@@ -1,5 +1,5 @@
 <%
-  // Usage: <%- include('partials/level-badge', { level: 3, size: 'sm' }) %>
+  // Usage: include('partials/level-badge', { level: 3, size: 'sm' })
   const lvl = typeof level !== 'undefined' ? level : null;
   const sz = typeof size !== 'undefined' && size === 'sm' ? 'level-badge-sm' : '';
   const names = { 1: 'Nascent', 2: 'Emerging', 3: 'Developing', 4: 'Advanced' };

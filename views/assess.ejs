@@ -104,14 +104,14 @@
     <!-- Nav buttons -->
     <div class="flex justify-between" style="margin-top:8px;padding-bottom:24px">
       <% if (activeCap > 0) { %>
-      <a href="?cap=<%= activeCap - 1 %>" class="btn btn-secondary"><- PREV</a>
+      <a href="?cap=<%= activeCap - 1 %>" class="btn btn-secondary">&larr; PREV</a>
       <% } else { %>
       <div></div>
       <% } %>
       <% if (activeCap < capabilities.length - 1) { %>
-      <a href="?cap=<%= activeCap + 1 %>" class="btn btn-primary">NEXT -> <%= capabilities[activeCap+1].icon %> <%= capabilities[activeCap+1].name.split(' ')[0] %>...</a>
+      <a href="?cap=<%= activeCap + 1 %>" class="btn btn-primary">NEXT &rarr; <%= capabilities[activeCap+1].icon %> <%= capabilities[activeCap+1].name.split(' ')[0] %>...</a>
       <% } else { %>
-      <a href="/plan" class="btn btn-primary">GO TO ACTION PLAN -></a>
+      <a href="/plan" class="btn btn-primary">GO TO ACTION PLAN &rarr;</a>
       <% } %>
     </div>
 
