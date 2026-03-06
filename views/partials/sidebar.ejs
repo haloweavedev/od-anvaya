@@ -25,6 +25,28 @@
   </div>
   <% } %>
 
+  <% if (user && user.is_admin) { %>
+  <a href="/admin" class="nav-item <%= currentPage === 'admin' ? 'active' : '' %>">
+    <div class="flex items-center gap-8">
+      <span class="nav-icon">🛡️</span>
+      <div>
+        <div class="step">ADMIN</div>
+        <div class="label">Dashboard</div>
+      </div>
+    </div>
+  </a>
+  <a href="/admin/submissions" class="nav-item <%= currentPage === 'submissions' ? 'active' : '' %>">
+    <div class="flex items-center gap-8">
+      <span class="nav-icon">📬</span>
+      <div>
+        <div class="step">ADMIN</div>
+        <div class="label">Submissions</div>
+      </div>
+    </div>
+  </a>
+  <div style="border-bottom:1px solid var(--bg-card);margin:6px 0"></div>
+  <% } %>
+
   <% for (const nav of navItems) { %>
   <a href="<%= nav.href %>" class="nav-item <%= currentPage === nav.id ? 'active' : '' %>">
     <div class="flex items-center gap-8">
