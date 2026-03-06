@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Setup — OD Anvaya</title>
   <link rel="stylesheet" href="/css/style.css">
+  <script type="module">import*as T from'https://cdn.jsdelivr.net/npm/@hotwired/turbo/dist/turbo.es2017-esm.js';window.Turbo=T;</script>
 </head>
 <body>
 <%
@@ -12,18 +13,25 @@
   const ratedSubCount = 0;
 %>
 <div class="app-shell">
-  <%- include('partials/sidebar', { page: 'setup', totalSubCount, ratedSubCount }) %>
+  <%- include('partials/sidebar', { page: 'setup', totalSubCount, ratedSubCount, capList: null, activeCapIndex: 0 }) %>
   <div class="main-content">
-    <div style="max-width:680px">
-      <div class="mb-40">
-        <h1 style="margin-bottom:8px">Welcome to the NGO<br><span class="text-accent">OD Assessment Tool</span></h1>
-        <p style="color:var(--text-muted);font-size:1rem;line-height:1.7">
-          An APD initiative to support partner NGOs in building strong, inclusive organisations.
-          Fill in the details below to begin a structured assessment across 13 capability areas.
-        </p>
+    <div style="max-width:720px">
+
+      <!-- Welcome banner -->
+      <div class="card mb-28" style="border-color:var(--accent)33;background:linear-gradient(135deg, rgba(99,202,183,0.06), rgba(14,165,233,0.04))">
+        <div class="flex gap-16 items-start">
+          <div style="width:48px;height:48px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">♿</div>
+          <div>
+            <h1 style="font-size:1.6rem;margin-bottom:6px">Partner NGO <span class="text-accent">OD Assessment</span></h1>
+            <p style="color:var(--text-muted);font-size:0.93rem;line-height:1.7;margin-bottom:0">
+              A structured tool by APD to assess organisational strengths across 13 capability areas, identify gaps, and co-create a prioritised development plan. Set aside 60–90 minutes with your leadership team.
+            </p>
+          </div>
+        </div>
       </div>
 
       <form method="POST" action="/setup">
+        <!-- Organisation details -->
         <div class="card mb-24">
           <h2 class="mono" style="font-size:1.07rem;letter-spacing:0.08em;margin-bottom:24px;color:var(--text-secondary)">ORGANISATION DETAILS</h2>
           <div class="grid grid-2 gap-20 mb-20">
@@ -46,22 +54,21 @@
           </div>
         </div>
 
-        <div class="card mb-32" style="background:var(--bg-input);border-color:rgba(14,165,233,0.2)">
-          <h3 class="mono" style="font-size:0.87rem;color:var(--accent-blue);letter-spacing:0.1em;margin-bottom:20px">HOW THIS TOOL WORKS</h3>
-          <div class="grid grid-2 gap-16">
-            <% const howItems = [
-              ['01 ASSESS', '🎯', 'Rate each of 13 capabilities on a 4-level scale. Every level has a full description to guide your assessment.'],
-              ['02 UNDERSTAND', '💡', 'Click "View Descriptions" on any sub-capability to see exactly what Level 1–4 looks like.'],
-              ['03 PLAN', '📋', 'Set target levels, assign priority (Critical / High / Medium / Low), and write specific action plans.'],
-              ['04 REPORT', '📊', 'Get a visual summary with radar chart, score breakdowns, and a consolidated action plan table.'],
+        <!-- How it works — compact -->
+        <div class="card mb-28" style="background:var(--bg-input);border-color:rgba(14,165,233,0.15)">
+          <h3 class="mono" style="font-size:0.8rem;color:var(--accent-blue);letter-spacing:0.1em;margin-bottom:16px">HOW IT WORKS</h3>
+          <div class="grid grid-4 gap-12">
+            <% const steps = [
+              ['01', 'Setup', 'Enter org details and context for this assessment.'],
+              ['02', 'Assess', 'Rate 46 sub-capabilities across 13 areas on a 4-level scale.'],
+              ['03', 'Plan', 'Set targets, priorities, milestones, timelines and resources.'],
+              ['04', 'Report', 'Get a visual report with radar chart, Gantt timeline and action plan.'],
             ]; %>
-            <% for (const [title, icon, desc] of howItems) { %>
-            <div class="flex gap-14" style="padding:16px;background:var(--bg-card);border-radius:var(--radius-md);border:1px solid var(--border)">
-              <span style="font-size:1.47rem;flex-shrink:0"><%= icon %></span>
-              <div>
-                <div class="mono" style="font-size:0.73rem;color:var(--accent);font-weight:700;margin-bottom:4px"><%= title %></div>
-                <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6"><%= desc %></div>
-              </div>
+            <% for (const [num, title, desc] of steps) { %>
+            <div>
+              <div class="mono" style="font-size:0.67rem;color:var(--accent);font-weight:700;margin-bottom:4px"><%= num %></div>
+              <div style="font-size:0.87rem;font-weight:700;color:var(--text-secondary);margin-bottom:4px"><%= title %></div>
+              <div style="font-size:0.73rem;color:var(--text-dim);line-height:1.6"><%= desc %></div>
             </div>
             <% } %>
           </div>

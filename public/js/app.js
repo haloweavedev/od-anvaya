@@ -1,5 +1,14 @@
 // OD Anvaya — Client-side interactivity
 
+// Turbo-aware page refresh (body swap instead of full reload)
+function refreshPage() {
+  if (window.Turbo) {
+    window.Turbo.visit(location.href, { action: 'replace' });
+  } else {
+    location.reload();
+  }
+}
+
 // Toast
 function showToast(msg, type = 'success') {
   const existing = document.querySelector('.toast');
@@ -27,7 +36,7 @@ async function setScore(subId, level, isToggle) {
         body: JSON.stringify({ subId, currentLevel: level })
       });
     }
-    location.reload();
+    refreshPage();
   } catch (err) {
     showToast('Failed to save score', 'warn');
   }
@@ -49,7 +58,7 @@ async function setTarget(subId, level, isToggle) {
         body: JSON.stringify({ subId, targetLevel: level })
       });
     }
-    location.reload();
+    refreshPage();
   } catch (err) {
     showToast('Failed to save target', 'warn');
   }
@@ -71,7 +80,7 @@ async function setPriority(subId, priority, isToggle) {
         body: JSON.stringify({ subId, priority })
       });
     }
-    location.reload();
+    refreshPage();
   } catch (err) {
     showToast('Failed to save priority', 'warn');
   }
@@ -141,7 +150,7 @@ async function addMilestone(subId) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ subId })
     });
-    location.reload();
+    refreshPage();
   } catch (err) {
     showToast('Failed to add milestone', 'warn');
   }
@@ -154,7 +163,6 @@ function updateMilestone(id, field, value) {
     try {
       const body = {};
       body[field] = value;
-      // Need all fields for PUT — get from DOM
       const row = document.querySelector(`[data-milestone-id="${id}"]`);
       if (!row) return;
       const inputs = row.querySelectorAll('textarea, input, select');
@@ -180,7 +188,7 @@ function updateMilestone(id, field, value) {
 async function deleteMilestone(id) {
   try {
     await fetch(`/api/milestones/${id}`, { method: 'DELETE' });
-    location.reload();
+    refreshPage();
   } catch (err) {
     showToast('Failed to delete milestone', 'warn');
   }
@@ -215,7 +223,7 @@ function showLevelGuide(subId) {
           <div style="width:32px;height:32px;border-radius:8px;background:${color}22;border:2px solid ${color};display:flex;align-items:center;justify-content:center;color:${color};font-weight:800;font-size:0.87rem;font-family:var(--font-mono);flex-shrink:0">L${lvl}</div>
           <div>
             <div style="font-weight:700;color:${color};font-size:0.93rem">${LEVEL_NAMES[lvl]}</div>
-            ${isSelected ? '<div style="font-size:0.67rem;color:var(--level-4);font-family:var(--font-mono)">✓ CURRENTLY SELECTED</div>' : ''}
+            ${isSelected ? '<div style="font-size:0.67rem;color:var(--level-4);font-family:var(--font-mono)">CURRENTLY SELECTED</div>' : ''}
           </div>
         </div>
         <div style="font-size:0.87rem;color:var(--text-secondary);line-height:1.7;padding-left:44px">${sub.levels[lvl] || ''}</div>
@@ -227,7 +235,8 @@ function showLevelGuide(subId) {
 }
 
 function closeLevelGuide() {
-  document.getElementById('level-guide-modal').style.display = 'none';
+  const modal = document.getElementById('level-guide-modal');
+  if (modal) modal.style.display = 'none';
 }
 
 // Close modal on Escape

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plan — OD Anvaya</title>
   <link rel="stylesheet" href="/css/style.css">
+  <script type="module">import*as T from'https://cdn.jsdelivr.net/npm/@hotwired/turbo/dist/turbo.es2017-esm.js';window.Turbo=T;</script>
 </head>
 <body>
 <%
@@ -20,189 +21,174 @@
     Medium: { color: '#3b82f6', icon: '🔵' },
     Low: { color: '#6b7280', icon: '⚪' },
   };
+
+  const capList = capabilities.map((c, i) => {
+    const withPriority = c.subcapabilities.filter(s => scores[s.id]?.priority).length;
+    return {
+      ...c,
+      stat: withPriority + ' prioritised'
+    };
+  });
 %>
 <div class="app-shell">
-  <%- include('partials/sidebar', { page: 'plan', totalSubCount, ratedSubCount }) %>
+  <%- include('partials/sidebar', { page: 'plan', totalSubCount, ratedSubCount, capList, activeCapIndex: activeCap }) %>
   <div class="main-content">
     <h1 class="mb-6">Action Planning</h1>
     <div class="mono text-muted mb-24" style="font-size:0.87rem">Set improvement targets and define actions for each sub-capability</div>
 
-    <div class="flex gap-24">
-      <!-- Left: cap nav -->
-      <div style="width:240px;flex-shrink:0">
-        <div class="form-label mb-12">CAPABILITIES</div>
-        <div style="overflow-y:auto;max-height:calc(100vh - 200px)">
-          <% capabilities.forEach((c, i) => {
-            const withPriority = c.subcapabilities.filter(s => scores[s.id]?.priority).length;
-            const isActive = i === activeCap;
-          %>
-          <a href="?cap=<%= i %>" class="cap-card <%= isActive ? 'active' : '' %>" style="<%= isActive ? 'border-color:'+c.color+'88' : '' %>">
-            <div class="flex items-center gap-8 mb-4">
-              <span><%= c.icon %></span>
-              <div class="cap-name"><%= c.name %></div>
-            </div>
-            <div class="cap-stat"><%= withPriority %> prioritised</div>
-          </a>
-          <% }); %>
+    <!-- Cap header -->
+    <div class="card mb-16" style="border-color:<%= cap.color %>44">
+      <div class="flex items-center gap-14">
+        <span style="font-size:1.73rem"><%= cap.icon %></span>
+        <h2 style="font-size:1.2rem"><%= cap.name %></h2>
+      </div>
+    </div>
+
+    <% for (const sub of cap.subcapabilities) {
+      const score = scores[sub.id];
+      const current = score?.current_level;
+      const target = score?.target_level;
+      const priority = score?.priority;
+      const pc = priority ? priorityConfig[priority] : null;
+      const scoreMilestones = score ? (milestones[score.id] || []) : [];
+    %>
+    <div class="sub-card" style="border-color:<%= pc ? pc.color+'44' : 'var(--border)' %>" id="plan-<%= sub.id %>">
+      <!-- Header -->
+      <div class="flex items-start justify-between mb-16 gap-12">
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:6px"><%= sub.name %></h3>
+          <div class="flex gap-8 flex-wrap items-center">
+            <% if (sub.is_dei) { %><span class="tag tag-dei">DEI</span><% } %>
+            <% if (current) { %><%- include('partials/level-badge', { level: current }) %><% } %>
+            <% if (current && target) { %><span class="text-dim">→</span><% } %>
+            <% if (target) { %><%- include('partials/level-badge', { level: target }) %><% } %>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-accent" onclick="showLevelGuide('<%= sub.id %>')">DESCRIPTIONS</button>
+      </div>
+
+      <!-- Current + Target levels -->
+      <div class="flex gap-20 flex-wrap mb-16">
+        <div>
+          <div class="form-label">CURRENT</div>
+          <div class="flex gap-6">
+            <% for (let l = 1; l <= 4; l++) { %>
+            <button class="level-btn level-btn-sm <%= current === l ? 'active-'+l : '' %>"
+              style="border-color:<%= current === l ? levelColors[l] : levelColors[l]+'44' %>;color:<%= current === l ? levelColors[l] : levelColors[l]+'88' %>"
+              onclick="setScore('<%= sub.id %>', <%= l %>, <%= current === l ? 'true' : 'false' %>)">L<%= l %></button>
+            <% } %>
+          </div>
+        </div>
+        <div>
+          <div class="form-label">TARGET</div>
+          <div class="flex gap-6">
+            <% for (let l = 1; l <= 4; l++) { %>
+            <button class="level-btn level-btn-sm <%= target === l ? 'active-'+l : '' %>"
+              style="border-color:<%= target === l ? levelColors[l] : levelColors[l]+'33' %>;color:<%= target === l ? levelColors[l] : levelColors[l]+'55' %>"
+              onclick="setTarget('<%= sub.id %>', <%= l %>, <%= target === l ? 'true' : 'false' %>)">L<%= l %></button>
+            <% } %>
+          </div>
         </div>
       </div>
 
-      <!-- Right: planning panel -->
-      <div class="flex-1">
-        <div class="card mb-16" style="border-color:<%= cap.color %>44">
-          <div class="flex items-center gap-14">
-            <span style="font-size:1.73rem"><%= cap.icon %></span>
-            <h2 style="font-size:1.2rem"><%= cap.name %></h2>
-          </div>
-        </div>
-
-        <% for (const sub of cap.subcapabilities) {
-          const score = scores[sub.id];
-          const current = score?.current_level;
-          const target = score?.target_level;
-          const priority = score?.priority;
-          const pc = priority ? priorityConfig[priority] : null;
-          const scoreMilestones = score ? (milestones[score.id] || []) : [];
-        %>
-        <div class="sub-card" style="border-color:<%= pc ? pc.color+'44' : 'var(--border)' %>" id="plan-<%= sub.id %>">
-          <!-- Header -->
-          <div class="flex items-start justify-between mb-16 gap-12">
-            <div>
-              <h3 style="font-size:1rem;margin-bottom:6px"><%= sub.name %></h3>
-              <div class="flex gap-8 flex-wrap items-center">
-                <% if (sub.is_dei) { %><span class="tag tag-dei">DEI</span><% } %>
-                <% if (current) { %><%- include('partials/level-badge', { level: current }) %><% } %>
-                <% if (current && target) { %><span class="text-dim">→</span><% } %>
-                <% if (target) { %><%- include('partials/level-badge', { level: target }) %><% } %>
-              </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-accent" onclick="showLevelGuide('<%= sub.id %>')">📖 DESCRIPTIONS</button>
-          </div>
-
-          <!-- Current + Target levels -->
-          <div class="flex gap-20 flex-wrap mb-16">
-            <div>
-              <div class="form-label">CURRENT</div>
-              <div class="flex gap-6">
-                <% for (let l = 1; l <= 4; l++) { %>
-                <button class="level-btn level-btn-sm <%= current === l ? 'active-'+l : '' %>"
-                  style="border-color:<%= current === l ? levelColors[l] : levelColors[l]+'44' %>;color:<%= current === l ? levelColors[l] : levelColors[l]+'88' %>"
-                  onclick="setScore('<%= sub.id %>', <%= l %>, <%= current === l ? 'true' : 'false' %>)">L<%= l %></button>
-                <% } %>
-              </div>
-            </div>
-            <div>
-              <div class="form-label">TARGET</div>
-              <div class="flex gap-6">
-                <% for (let l = 1; l <= 4; l++) { %>
-                <button class="level-btn level-btn-sm <%= target === l ? 'active-'+l : '' %>"
-                  style="border-color:<%= target === l ? levelColors[l] : levelColors[l]+'33' %>;color:<%= target === l ? levelColors[l] : levelColors[l]+'55' %>"
-                  onclick="setTarget('<%= sub.id %>', <%= l %>, <%= target === l ? 'true' : 'false' %>)">L<%= l %></button>
-                <% } %>
-              </div>
-            </div>
-          </div>
-
-          <!-- Priority -->
-          <div class="mb-14">
-            <div class="form-label">PRIORITY</div>
-            <div class="flex gap-8 flex-wrap">
-              <% for (const [p, cfg] of Object.entries(priorityConfig)) { %>
-              <button class="priority-btn <%= priority === p ? 'active-'+p.toLowerCase() : '' %>"
-                style="border-color:<%= priority === p ? cfg.color : cfg.color+'44' %>;color:<%= priority === p ? cfg.color : cfg.color+'88' %>"
-                onclick="setPriority('<%= sub.id %>', '<%= p %>', <%= priority === p ? 'true' : 'false' %>)"><%= cfg.icon %> <%= p %></button>
-              <% } %>
-            </div>
-          </div>
-
-          <!-- Milestones -->
-          <div class="mb-14">
-            <div class="flex items-center justify-between mb-12">
-              <div>
-                <div class="mono" style="font-size:0.73rem;color:var(--accent);letter-spacing:0.1em;font-weight:700">📌 MILESTONES & ACTIVITIES</div>
-                <% if (current && target) { %>
-                <div class="mono text-dim" style="font-size:0.67rem;margin-top:3px">
-                  Steps to move from <span style="color:<%= levelColors[current] %>">L<%= current %> <%= levelNames[current] %></span> → <span style="color:<%= levelColors[target] %>">L<%= target %> <%= levelNames[target] %></span>
-                </div>
-                <% } %>
-              </div>
-              <button class="btn btn-sm btn-outline-accent" onclick="addMilestone('<%= sub.id %>')">+ ADD</button>
-            </div>
-
-            <div id="milestones-<%= sub.id %>">
-              <% if (scoreMilestones.length === 0) { %>
-              <div class="text-center" style="border:1.5px dashed var(--border-accent);border-radius:var(--radius-md);padding:18px 20px;color:var(--text-dim);font-size:0.8rem;cursor:pointer" onclick="addMilestone('<%= sub.id %>')">
-                Click <span class="mono text-accent">+ ADD</span> to define specific activities and milestones
-              </div>
-              <% } else { %>
-              <div class="milestone-table">
-                <div class="milestone-header">
-                  <span>#</span><span>ACTIVITY / MILESTONE</span><span>OWNER</span><span>TARGET DATE</span><span>STATUS</span><span></span>
-                </div>
-                <% scoreMilestones.forEach((m, idx) => { %>
-                <div class="milestone-row" data-milestone-id="<%= m.id %>">
-                  <div class="mono text-dim" style="font-size:0.73rem;padding-top:8px"><%= idx + 1 %></div>
-                  <textarea class="milestone-input" placeholder="e.g. Conduct needs assessment and gap analysis"
-                    onchange="updateMilestone(<%= m.id %>, 'activity', this.value)" style="resize:none;min-height:36px;line-height:1.5"><%= m.activity || '' %></textarea>
-                  <input class="milestone-input mono" style="font-size:0.73rem" placeholder="e.g. CEO"
-                    value="<%= m.owner || '' %>" onchange="updateMilestone(<%= m.id %>, 'owner', this.value)">
-                  <input type="date" class="milestone-input mono" style="font-size:0.73rem"
-                    value="<%= m.target_date ? new Date(m.target_date).toISOString().split('T')[0] : '' %>"
-                    onchange="updateMilestone(<%= m.id %>, 'targetDate', this.value)">
-                  <select class="form-select" style="padding:5px 8px;font-size:0.73rem;width:100%;border-color:<%= m.status === 'Done' ? 'var(--level-4)' : m.status === 'In Progress' ? 'var(--accent-blue)' : m.status === 'Blocked' ? 'var(--level-1)' : 'var(--border)' %>44"
-                    onchange="updateMilestone(<%= m.id %>, 'status', this.value)">
-                    <% for (const st of ['Pending', 'In Progress', 'Done', 'Blocked']) { %>
-                    <option value="<%= st %>" <%= m.status === st ? 'selected' : '' %>><%= st %></option>
-                    <% } %>
-                  </select>
-                  <button onclick="deleteMilestone(<%= m.id %>)" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:0.93rem;padding-top:6px;line-height:1">×</button>
-                </div>
-                <% }); %>
-              </div>
-              <% } %>
-            </div>
-          </div>
-
-          <!-- Resources -->
-          <div class="mb-14">
-            <div class="form-label">💎 RESOURCES NEEDED <span class="text-dim">(optional)</span></div>
-            <textarea class="form-textarea" style="border-color:var(--accent-purple)44"
-              placeholder="e.g. Budget: Rs.2L for training workshop · External consultant for HR audit · 10hrs/month from Programme team..."
-              onchange="saveResources('<%= sub.id %>', this.value)"><%= score?.resources || '' %></textarea>
-          </div>
-
-          <!-- Timeline -->
-          <div class="card-dark" style="border-color:var(--border-accent)">
-            <div class="mono" style="font-size:0.73rem;color:var(--accent-blue);letter-spacing:0.1em;margin-bottom:12px">📅 TIMELINE & OWNERSHIP</div>
-            <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:12px">
-              <div>
-                <div class="form-label" style="font-size:0.67rem">START DATE</div>
-                <input type="date" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
-                  value="<%= score?.timeline_start ? new Date(score.timeline_start).toISOString().split('T')[0] : '' %>"
-                  onchange="saveTimeline('<%= sub.id %>', 'timelineStart', this.value)">
-              </div>
-              <div>
-                <div class="form-label" style="font-size:0.67rem">END DATE</div>
-                <input type="date" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
-                  value="<%= score?.timeline_end ? new Date(score.timeline_end).toISOString().split('T')[0] : '' %>"
-                  onchange="saveTimeline('<%= sub.id %>', 'timelineEnd', this.value)">
-              </div>
-              <div>
-                <div class="form-label" style="font-size:0.67rem">RESPONSIBLE PERSON</div>
-                <input type="text" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
-                  placeholder="e.g. Programme Director"
-                  value="<%= score?.timeline_owner || '' %>"
-                  onchange="saveTimeline('<%= sub.id %>', 'timelineOwner', this.value)">
-              </div>
-            </div>
-          </div>
-        </div>
-        <% } %>
-
-        <div style="padding-bottom:24px">
-          <a href="/report" class="btn btn-primary">VIEW FULL REPORT →</a>
+      <!-- Priority -->
+      <div class="mb-14">
+        <div class="form-label">PRIORITY</div>
+        <div class="flex gap-8 flex-wrap">
+          <% for (const [p, cfg] of Object.entries(priorityConfig)) { %>
+          <button class="priority-btn <%= priority === p ? 'active-'+p.toLowerCase() : '' %>"
+            style="border-color:<%= priority === p ? cfg.color : cfg.color+'44' %>;color:<%= priority === p ? cfg.color : cfg.color+'88' %>"
+            onclick="setPriority('<%= sub.id %>', '<%= p %>', <%= priority === p ? 'true' : 'false' %>)"><%= cfg.icon %> <%= p %></button>
+          <% } %>
         </div>
       </div>
+
+      <!-- Milestones -->
+      <div class="mb-14">
+        <div class="flex items-center justify-between mb-12">
+          <div>
+            <div class="mono" style="font-size:0.73rem;color:var(--accent);letter-spacing:0.1em;font-weight:700">MILESTONES & ACTIVITIES</div>
+            <% if (current && target) { %>
+            <div class="mono text-dim" style="font-size:0.67rem;margin-top:3px">
+              Steps to move from <span style="color:<%= levelColors[current] %>">L<%= current %> <%= levelNames[current] %></span> → <span style="color:<%= levelColors[target] %>">L<%= target %> <%= levelNames[target] %></span>
+            </div>
+            <% } %>
+          </div>
+          <button class="btn btn-sm btn-outline-accent" onclick="addMilestone('<%= sub.id %>')">+ ADD</button>
+        </div>
+
+        <div id="milestones-<%= sub.id %>">
+          <% if (scoreMilestones.length === 0) { %>
+          <div class="text-center" style="border:1.5px dashed var(--border-accent);border-radius:var(--radius-md);padding:18px 20px;color:var(--text-dim);font-size:0.8rem;cursor:pointer" onclick="addMilestone('<%= sub.id %>')">
+            Click <span class="mono text-accent">+ ADD</span> to define specific activities and milestones
+          </div>
+          <% } else { %>
+          <div class="milestone-table">
+            <div class="milestone-header">
+              <span>#</span><span>ACTIVITY / MILESTONE</span><span>OWNER</span><span>TARGET DATE</span><span>STATUS</span><span></span>
+            </div>
+            <% scoreMilestones.forEach((m, idx) => { %>
+            <div class="milestone-row" data-milestone-id="<%= m.id %>">
+              <div class="mono text-dim" style="font-size:0.73rem;padding-top:8px"><%= idx + 1 %></div>
+              <textarea class="milestone-input" placeholder="e.g. Conduct needs assessment and gap analysis"
+                onchange="updateMilestone(<%= m.id %>, 'activity', this.value)" style="resize:none;min-height:36px;line-height:1.5"><%= m.activity || '' %></textarea>
+              <input class="milestone-input mono" style="font-size:0.73rem" placeholder="e.g. CEO"
+                value="<%= m.owner || '' %>" onchange="updateMilestone(<%= m.id %>, 'owner', this.value)">
+              <input type="date" class="milestone-input mono" style="font-size:0.73rem"
+                value="<%= m.target_date ? new Date(m.target_date).toISOString().split('T')[0] : '' %>"
+                onchange="updateMilestone(<%= m.id %>, 'targetDate', this.value)">
+              <select class="form-select" style="padding:5px 8px;font-size:0.73rem;width:100%;border-color:<%= m.status === 'Done' ? 'var(--level-4)' : m.status === 'In Progress' ? 'var(--accent-blue)' : m.status === 'Blocked' ? 'var(--level-1)' : 'var(--border)' %>44"
+                onchange="updateMilestone(<%= m.id %>, 'status', this.value)">
+                <% for (const st of ['Pending', 'In Progress', 'Done', 'Blocked']) { %>
+                <option value="<%= st %>" <%= m.status === st ? 'selected' : '' %>><%= st %></option>
+                <% } %>
+              </select>
+              <button onclick="deleteMilestone(<%= m.id %>)" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:0.93rem;padding-top:6px;line-height:1">x</button>
+            </div>
+            <% }); %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Resources -->
+      <div class="mb-14">
+        <div class="form-label">RESOURCES NEEDED <span class="text-dim">(optional)</span></div>
+        <textarea class="form-textarea" style="border-color:var(--accent-purple)44"
+          placeholder="e.g. Budget: Rs.2L for training workshop · External consultant for HR audit · 10hrs/month from Programme team..."
+          onchange="saveResources('<%= sub.id %>', this.value)"><%= score?.resources || '' %></textarea>
+      </div>
+
+      <!-- Timeline -->
+      <div class="card-dark" style="border-color:var(--border-accent)">
+        <div class="mono" style="font-size:0.73rem;color:var(--accent-blue);letter-spacing:0.1em;margin-bottom:12px">TIMELINE & OWNERSHIP</div>
+        <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div>
+            <div class="form-label" style="font-size:0.67rem">START DATE</div>
+            <input type="date" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
+              value="<%= score?.timeline_start ? new Date(score.timeline_start).toISOString().split('T')[0] : '' %>"
+              onchange="saveTimeline('<%= sub.id %>', 'timelineStart', this.value)">
+          </div>
+          <div>
+            <div class="form-label" style="font-size:0.67rem">END DATE</div>
+            <input type="date" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
+              value="<%= score?.timeline_end ? new Date(score.timeline_end).toISOString().split('T')[0] : '' %>"
+              onchange="saveTimeline('<%= sub.id %>', 'timelineEnd', this.value)">
+          </div>
+          <div>
+            <div class="form-label" style="font-size:0.67rem">RESPONSIBLE PERSON</div>
+            <input type="text" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
+              placeholder="e.g. Programme Director"
+              value="<%= score?.timeline_owner || '' %>"
+              onchange="saveTimeline('<%= sub.id %>', 'timelineOwner', this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <div style="padding-bottom:24px">
+      <a href="/report" class="btn btn-primary">VIEW FULL REPORT -></a>
     </div>
 
     <!-- Level Guide Modal -->
@@ -214,7 +200,7 @@
             <h2 id="modal-sub-name" style="font-size:1.2rem"></h2>
             <div id="modal-dei-tag"></div>
           </div>
-          <button onclick="closeLevelGuide()" style="background:none;border:none;color:var(--text-muted);font-size:1.47rem;cursor:pointer;line-height:1">×</button>
+          <button onclick="closeLevelGuide()" style="background:none;border:none;color:var(--text-muted);font-size:1.47rem;cursor:pointer;line-height:1">x</button>
         </div>
         <div id="modal-levels" style="padding:28px"></div>
         <div style="padding:16px 28px;border-top:1px solid var(--border);text-align:center">

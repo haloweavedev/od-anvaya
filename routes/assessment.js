@@ -61,10 +61,11 @@ async function loadMilestones(assessmentId) {
   return milestones;
 }
 
-// Intro / Landing page
+// Landing — redirect to setup (or assess if already set up)
 router.get('/', requireAuth, async (req, res) => {
-  const capabilities = await loadCapabilities();
-  res.render('intro', { capabilities });
+  const assessment = await getOrCreateAssessment(req.session.user.id, req.session.user.org_name);
+  if (assessment.assessor) return res.redirect('/assess');
+  res.redirect('/setup');
 });
 
 // Setup page

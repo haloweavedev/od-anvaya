@@ -1,5 +1,5 @@
 // Gantt Chart — rendered client-side
-(function() {
+function initGantt() {
   const container = document.getElementById('gantt-chart');
   if (!container || typeof GANTT_ITEMS === 'undefined' || GANTT_ITEMS.length === 0) return;
   if (!GANTT_MIN || !GANTT_MAX) return;
@@ -52,7 +52,7 @@
     html += '<span style="font-size:0.8rem;flex-shrink:0">' + item.icon + '</span>';
     html += '<div style="overflow:hidden"><div style="font-size:0.73rem;color:var(--text-secondary);font-weight:600;white-space:nowrap;text-overflow:ellipsis;overflow:hidden">' + item.name + '</div>';
     if (item.owner) {
-      html += '<div style="font-size:0.6rem;color:var(--text-dim);font-family:var(--font-mono);white-space:nowrap;text-overflow:ellipsis;overflow:hidden">👤 ' + item.owner + '</div>';
+      html += '<div style="font-size:0.6rem;color:var(--text-dim);font-family:var(--font-mono);white-space:nowrap;text-overflow:ellipsis;overflow:hidden">person: ' + item.owner + '</div>';
     }
     html += '</div></div>';
     // Bar track
@@ -77,4 +77,8 @@
   html += '</div>';
 
   container.innerHTML = html;
-})();
+}
+
+// Run on initial load and Turbo navigations
+initGantt();
+document.addEventListener('turbo:load', initGantt);

@@ -1,5 +1,5 @@
 // Radar Chart — rendered client-side from embedded data
-(function() {
+function initRadar() {
   const container = document.getElementById('radar-chart');
   if (!container || typeof CAPABILITIES === 'undefined' || typeof SCORES === 'undefined') return;
 
@@ -60,4 +60,8 @@
 
   svg += '</svg>';
   container.innerHTML = svg;
-})();
+}
+
+// Run on initial load and Turbo navigations
+initRadar();
+document.addEventListener('turbo:load', initRadar);

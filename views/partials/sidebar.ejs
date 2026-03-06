@@ -1,6 +1,5 @@
 <%
   const navItems = [
-    { id: 'home', href: '/', step: '00', label: 'About', icon: '🏠' },
     { id: 'setup', href: '/setup', step: '01', label: 'Setup', icon: '⚙️' },
     { id: 'assess', href: '/assess', step: '02', label: 'Assess', icon: '🎯' },
     { id: 'plan', href: '/plan', step: '03', label: 'Plan', icon: '📋' },
@@ -10,6 +9,8 @@
   const totalSubs = typeof totalSubCount !== 'undefined' ? totalSubCount : 46;
   const ratedCount = typeof ratedSubCount !== 'undefined' ? ratedSubCount : 0;
   const pct = totalSubs > 0 ? Math.round((ratedCount / totalSubs) * 100) : 0;
+  const sidebarCaps = typeof capList !== 'undefined' ? capList : null;
+  const sidebarActiveCap = typeof activeCapIndex !== 'undefined' ? activeCapIndex : 0;
 %>
 <div class="sidebar">
   <div class="sidebar-logo">
@@ -34,6 +35,25 @@
       </div>
     </div>
   </a>
+  <% } %>
+
+  <% if (sidebarCaps && sidebarCaps.length > 0) { %>
+  <div class="sidebar-caps">
+    <div class="caps-label">CAPABILITIES</div>
+    <% sidebarCaps.forEach((c, i) => {
+      const isActive = i === sidebarActiveCap;
+    %>
+    <a href="?cap=<%= i %>" class="cap-card <%= isActive ? 'active' : '' %>" style="<%= isActive ? 'border-color:'+c.color+'88' : '' %>">
+      <div class="flex items-center gap-6 mb-4">
+        <span class="cap-icon"><%= c.icon %></span>
+        <div class="cap-name"><%= c.name %></div>
+      </div>
+      <% if (c.stat) { %>
+      <div class="cap-stat"><%= c.stat %></div>
+      <% } %>
+    </a>
+    <% }); %>
+  </div>
   <% } %>
 
   <div class="sidebar-footer">
