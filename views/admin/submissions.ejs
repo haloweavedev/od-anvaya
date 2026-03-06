@@ -52,15 +52,15 @@
   <!-- Sidebar -->
   <div class="sub-sidebar">
     <div style="padding:0 16px 16px;border-bottom:1px solid var(--bg-card);margin-bottom:10px">
-      <div class="mono" style="font-size:0.6rem;letter-spacing:0.2em;color:var(--accent);margin-bottom:4px">APD · OD TOOL</div>
-      <div style="font-size:1.07rem;font-weight:800;color:var(--text-primary)">Submissions</div>
+      <div class="mono" style="font-size:0.7rem;letter-spacing:0.2em;color:var(--accent);margin-bottom:4px">APD · OD TOOL</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--text-primary)">Submissions</div>
     </div>
 
     <div style="padding:0 16px 12px;border-bottom:1px solid var(--bg-card);margin-bottom:8px">
-      <div class="flex justify-between" style="font-family:var(--font-mono);font-size:0.67rem;color:var(--text-dim);margin-bottom:6px">
+      <div class="flex justify-between" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-dim);margin-bottom:6px">
         <span>NGOs</span><span style="color:var(--accent)"><%= stats.totalNGOs %></span>
       </div>
-      <div class="flex gap-12" style="font-size:0.67rem;font-family:var(--font-mono)">
+      <div class="flex gap-12" style="font-size:0.75rem;font-family:var(--font-mono)">
         <span style="color:var(--level-4)"><%= stats.completedAssessments %> done</span>
         <span style="color:var(--accent-blue)"><%= stats.inProgress %> active</span>
         <span style="color:var(--text-dim)"><%= stats.notStarted %> pending</span>
@@ -68,16 +68,16 @@
     </div>
 
     <a href="/admin" class="org-nav-item" style="margin-bottom:4px">
-      <div class="mono" style="font-size:0.67rem;color:var(--text-dim);letter-spacing:0.1em">ADMIN</div>
-      <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600">Dashboard</div>
+      <div class="mono" style="font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em">ADMIN</div>
+      <div style="font-size:0.875rem;color:var(--text-muted);font-weight:600">Dashboard</div>
     </a>
     <a href="/admin/submissions" class="org-nav-item active">
-      <div class="mono" style="font-size:0.67rem;color:var(--accent);letter-spacing:0.1em">VIEW</div>
-      <div style="font-size:0.8rem;color:var(--text-primary);font-weight:600">All Submissions</div>
+      <div class="mono" style="font-size:0.7rem;color:var(--accent);letter-spacing:0.1em">VIEW</div>
+      <div style="font-size:0.875rem;color:var(--text-primary);font-weight:600">All Submissions</div>
     </a>
 
     <div style="padding:12px 16px 8px;border-top:1px solid var(--bg-card);margin-top:8px">
-      <div class="mono" style="font-size:0.6rem;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:8px">ORGANISATIONS</div>
+      <div class="mono" style="font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:8px">ORGANISATIONS</div>
     </div>
 
     <% for (const org of orgs) {
@@ -88,16 +88,16 @@
     %>
     <a href="#org-<%= org.user_id %>" class="org-nav-item" onclick="scrollToOrg(<%= org.user_id %>)">
       <div class="flex justify-between items-center">
-        <div style="font-size:0.8rem;color:var(--text-secondary);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px"><%= org.org_name %></div>
+        <div style="font-size:0.85rem;color:var(--text-secondary);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px"><%= org.org_name %></div>
         <% if (avg) { %>
-        <span class="mono" style="font-size:0.8rem;font-weight:800;color:<%= avgColor %>"><%= avg.toFixed(1) %></span>
+        <span class="mono" style="font-size:0.85rem;font-weight:800;color:<%= avgColor %>"><%= avg.toFixed(1) %></span>
         <% } %>
       </div>
       <div class="flex items-center gap-8" style="margin-top:4px">
         <div class="mini-bar flex-1">
           <div class="mini-bar-fill" style="width:<%= pct %>%;background:<%= avgColor %>"></div>
         </div>
-        <span class="mono" style="font-size:0.6rem;color:var(--text-dim)"><%= pct %>%</span>
+        <span class="mono" style="font-size:0.7rem;color:var(--text-dim)"><%= pct %>%</span>
       </div>
     </a>
     <% } %>
@@ -112,9 +112,9 @@
     <!-- Platform KPIs -->
     <div class="flex justify-between items-start mb-28 flex-wrap gap-16">
       <div>
-        <div class="mono text-muted" style="font-size:0.73rem;letter-spacing:0.12em;margin-bottom:6px">PARTNER NGO SUBMISSIONS</div>
+        <div class="mono text-muted" style="font-size:0.8rem;letter-spacing:0.12em;margin-bottom:6px">PARTNER NGO SUBMISSIONS</div>
         <h1 style="margin-bottom:4px">Assessment Overview</h1>
-        <div class="mono text-muted" style="font-size:0.8rem"><%= orgs.length %> organisations · <%= totalSubs %> sub-capabilities per assessment</div>
+        <div class="mono text-muted" style="font-size:0.875rem"><%= orgs.length %> organisations · <%= totalSubs %> sub-capabilities per assessment</div>
       </div>
       <div class="flex gap-10">
         <a href="/admin" class="btn btn-ghost btn-sm">Dashboard</a>
@@ -174,32 +174,32 @@
             <span class="tag" style="background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.25);color:var(--text-muted)">NOT STARTED</span>
             <% } %>
           </div>
-          <div class="flex gap-16 flex-wrap" style="font-size:0.8rem;color:var(--text-muted)">
+          <div class="flex gap-16 flex-wrap" style="font-size:0.875rem;color:var(--text-muted)">
             <span><%= org.user_name %> &middot; <%= org.email %></span>
             <% if (org.assessor) { %><span>Assessor: <span style="color:var(--text-secondary)"><%= org.assessor %></span></span><% } %>
             <% if (org.assessment_date) { %><span><%= new Date(org.assessment_date).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) %></span><% } %>
           </div>
           <% if (org.context_notes) { %>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:6px;line-height:1.6"><%= org.context_notes.substring(0, 200) %><%= org.context_notes.length > 200 ? '...' : '' %></div>
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-top:6px;line-height:1.6"><%= org.context_notes.substring(0, 200) %><%= org.context_notes.length > 200 ? '...' : '' %></div>
           <% } %>
         </div>
         <div class="flex gap-12">
           <% if (avg) { %>
           <div class="stat-card" style="padding:14px 18px;min-width:80px;text-align:center">
             <div class="mono" style="font-size:1.6rem;font-weight:800;color:<%= avgColor %>"><%= avg.toFixed(1) %></div>
-            <div class="mono text-dim" style="font-size:0.6rem;letter-spacing:0.1em">AVERAGE</div>
+            <div class="mono text-dim" style="font-size:0.7rem;letter-spacing:0.1em">AVERAGE</div>
           </div>
           <% } %>
           <div class="stat-card" style="padding:14px 18px;min-width:80px;text-align:center">
             <div class="mono" style="font-size:1.6rem;font-weight:800;color:<%= pct === 100 ? 'var(--level-4)' : 'var(--accent-blue)' %>"><%= pct %>%</div>
-            <div class="mono text-dim" style="font-size:0.6rem;letter-spacing:0.1em">COMPLETE</div>
+            <div class="mono text-dim" style="font-size:0.7rem;letter-spacing:0.1em">COMPLETE</div>
           </div>
         </div>
       </div>
 
       <!-- Progress bar -->
       <div class="mb-20">
-        <div class="flex justify-between mb-4" style="font-family:var(--font-mono);font-size:0.67rem;color:var(--text-dim)">
+        <div class="flex justify-between mb-4" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-dim)">
           <span><%= rated %>/<%= totalSubs %> sub-capabilities rated</span>
           <div class="flex gap-12">
             <span><%= targets %> targets</span>
@@ -215,7 +215,7 @@
 
       <% if (rated > 0) { %>
       <!-- Quick stats row -->
-      <div class="flex gap-16 mb-20 flex-wrap" style="font-size:0.73rem;font-family:var(--font-mono)">
+      <div class="flex gap-16 mb-20 flex-wrap" style="font-size:0.8rem;font-family:var(--font-mono)">
         <% if (criticals > 0) { %><span style="color:var(--level-1)">🔴 <%= criticals %> critical</span><% } %>
         <% if (minScore) { %><span style="color:<%= levelColors[minScore] %>">Min: L<%= minScore %></span><% } %>
         <% if (maxScore) { %><span style="color:<%= levelColors[maxScore] %>">Max: L<%= maxScore %></span><% } %>
@@ -225,15 +225,15 @@
       <!-- Capability scores breakdown -->
       <div class="detail-grid">
         <div>
-          <div class="mono text-dim" style="font-size:0.67rem;letter-spacing:0.1em;margin-bottom:12px">CAPABILITY SCORES</div>
+          <div class="mono text-dim" style="font-size:0.75rem;letter-spacing:0.1em;margin-bottom:12px">CAPABILITY SCORES</div>
           <% for (const cs of org.capScores) {
             const csAvg = cs.avg ? parseFloat(cs.avg) : null;
             const csColor = csAvg ? levelColors[Math.round(csAvg)] : 'var(--text-dim)';
           %>
           <div class="cap-row">
             <span><%= cs.icon %></span>
-            <div style="font-size:0.73rem;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><%= cs.name %></div>
-            <div class="mono" style="font-size:0.73rem;font-weight:700;color:<%= csColor %>;text-align:right"><%= csAvg ? csAvg.toFixed(1) : '—' %></div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><%= cs.name %></div>
+            <div class="mono" style="font-size:0.8rem;font-weight:700;color:<%= csColor %>;text-align:right"><%= csAvg ? csAvg.toFixed(1) : '—' %></div>
             <div class="mini-bar">
               <div class="mini-bar-fill" style="width:<%= csAvg ? (csAvg/4*100) : 0 %>%;background:<%= csColor %>"></div>
             </div>
@@ -241,7 +241,7 @@
           <% } %>
         </div>
         <div>
-          <div class="mono text-dim" style="font-size:0.67rem;letter-spacing:0.1em;margin-bottom:12px">LEVEL DISTRIBUTION</div>
+          <div class="mono text-dim" style="font-size:0.75rem;letter-spacing:0.1em;margin-bottom:12px">LEVEL DISTRIBUTION</div>
           <% if (org.capScores.length > 0) {
             const lvlCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
             for (const cs of org.capScores) {
@@ -258,7 +258,7 @@
               <div class="mini-bar flex-1" style="height:8px">
                 <div class="mini-bar-fill" style="width:<%= rated > 0 ? (lvlCounts[l]/rated*100) : 0 %>%;background:<%= levelColors[l] %>"></div>
               </div>
-              <span class="mono" style="font-size:0.67rem;color:var(--text-dim);min-width:20px;text-align:right"><%= lvlCounts[l] %></span>
+              <span class="mono" style="font-size:0.75rem;color:var(--text-dim);min-width:20px;text-align:right"><%= lvlCounts[l] %></span>
             </div>
             <% } %>
           </div>
@@ -270,7 +270,7 @@
         </div>
       </div>
       <% } else { %>
-      <div class="text-center" style="padding:24px;border:1.5px dashed var(--border);border-radius:var(--radius-md);color:var(--text-dim);font-size:0.87rem">
+      <div class="text-center" style="padding:24px;border:1.5px dashed var(--border);border-radius:var(--radius-md);color:var(--text-dim);font-size:0.925rem">
         Assessment not started yet
       </div>
       <% } %>
@@ -280,7 +280,7 @@
     <% if (orgs.length === 0) { %>
     <div class="card text-center" style="border-style:dashed;padding:48px">
       <div style="font-size:2rem;margin-bottom:12px">📋</div>
-      <div class="text-dim" style="font-size:1rem">No submissions yet. Partner NGOs will appear here once they register.</div>
+      <div class="text-dim" style="font-size:1.05rem">No submissions yet. Partner NGOs will appear here once they register.</div>
     </div>
     <% } %>
   </div>
