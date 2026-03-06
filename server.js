@@ -26,8 +26,17 @@ app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
 }));
 
-// Make user available in all templates
-app.use((req, res, next) => {
+// Make user available in all templates, refresh is_admin from DB
+app.use(async (req, res, next) => {
+  if (req.session.user) {
+    try {
+      const r = await pool.query('SELECT is_admin, org_name FROM users WHERE id = $1', [req.session.user.id]);
+      if (r.rows.length) {
+        req.session.user.is_admin = r.rows[0].is_admin;
+        req.session.user.org_name = r.rows[0].org_name;
+      }
+    } catch (_) { /* proceed with cached session */ }
+  }
   res.locals.user = req.session.user || null;
   next();
 });
