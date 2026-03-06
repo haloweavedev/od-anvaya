@@ -67,17 +67,15 @@
         <button type="button" class="btn btn-sm btn-outline-accent" onclick="showLevelGuide('<%= sub.id %>')">DESCRIPTIONS</button>
       </div>
 
-      <!-- Current + Target levels -->
-      <div class="flex gap-20 flex-wrap mb-16">
+      <!-- Current (read-only from Assess) + Target -->
+      <div class="flex gap-20 flex-wrap mb-16 items-end">
         <div>
-          <div class="form-label">CURRENT</div>
-          <div class="flex gap-6">
-            <% for (let l = 1; l <= 4; l++) { %>
-            <button class="level-btn level-btn-sm <%= current === l ? 'active-'+l : '' %>"
-              style="border-color:<%= current === l ? levelColors[l] : levelColors[l]+'44' %>;color:<%= current === l ? levelColors[l] : levelColors[l]+'88' %>"
-              onclick="setScore('<%= sub.id %>', <%= l %>, <%= current === l ? 'true' : 'false' %>)">L<%= l %></button>
-            <% } %>
-          </div>
+          <div class="form-label">CURRENT <span class="text-dim">(from Assess)</span></div>
+          <% if (current) { %>
+          <%- include('partials/level-badge', { level: current }) %>
+          <% } else { %>
+          <a href="/assess?cap=<%= activeCap %>" class="btn btn-sm btn-ghost" style="font-size:0.67rem">SET IN ASSESS &rarr;</a>
+          <% } %>
         </div>
         <div>
           <div class="form-label">TARGET</div>
