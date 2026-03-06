@@ -30,7 +30,7 @@ function initGantt() {
   // Month headers
   html += '<div style="display:flex;margin-bottom:8px;margin-left:200px">';
   months.forEach(function(m) {
-    html += '<div style="flex:1;min-width:0;font-size:0.6rem;font-family:var(--font-mono);color:var(--text-dim);border-left:1px solid var(--border);padding-left:4px">';
+    html += '<div style="flex:1;min-width:0;font-size:0.7rem;font-family:var(--font-mono);color:var(--text-dim);border-left:1px solid var(--border);padding-left:4px">';
     html += m.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
     html += '</div>';
   });
@@ -50,9 +50,9 @@ function initGantt() {
     // Label
     html += '<div style="width:200px;flex-shrink:0;padding-right:12px;display:flex;align-items:center;gap:6px;overflow:hidden">';
     html += '<span style="font-size:0.8rem;flex-shrink:0">' + item.icon + '</span>';
-    html += '<div style="overflow:hidden"><div style="font-size:0.73rem;color:var(--text-secondary);font-weight:600;white-space:nowrap;text-overflow:ellipsis;overflow:hidden">' + item.name + '</div>';
+    html += '<div style="overflow:hidden"><div style="font-size:0.8rem;color:var(--text-secondary);font-weight:600;white-space:nowrap;text-overflow:ellipsis;overflow:hidden">' + item.name + '</div>';
     if (item.owner) {
-      html += '<div style="font-size:0.6rem;color:var(--text-dim);font-family:var(--font-mono);white-space:nowrap;text-overflow:ellipsis;overflow:hidden">person: ' + item.owner + '</div>';
+      html += '<div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-mono);white-space:nowrap;text-overflow:ellipsis;overflow:hidden">person: ' + item.owner + '</div>';
     }
     html += '</div></div>';
     // Bar track
@@ -70,7 +70,7 @@ function initGantt() {
   html += '<div style="display:flex;gap:16px;margin-top:16px;margin-left:200px;flex-wrap:wrap">';
   Object.keys(PRIORITY_COLORS).forEach(function(p) {
     var c = PRIORITY_COLORS[p];
-    html += '<div style="display:flex;align-items:center;gap:6px;font-size:0.67rem;font-family:var(--font-mono);color:var(--text-dim)">';
+    html += '<div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;font-family:var(--font-mono);color:var(--text-dim)">';
     html += '<div style="width:16px;height:8px;border-radius:2px;background:'+c+'33;border:1.5px solid '+c+'88"></div>';
     html += p + '</div>';
   });

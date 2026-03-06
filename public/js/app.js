@@ -223,7 +223,7 @@ function showLevelGuide(subId) {
           <div style="width:32px;height:32px;border-radius:8px;background:${color}22;border:2px solid ${color};display:flex;align-items:center;justify-content:center;color:${color};font-weight:800;font-size:0.87rem;font-family:var(--font-mono);flex-shrink:0">L${lvl}</div>
           <div>
             <div style="font-weight:700;color:${color};font-size:0.93rem">${LEVEL_NAMES[lvl]}</div>
-            ${isSelected ? '<div style="font-size:0.67rem;color:var(--level-4);font-family:var(--font-mono)">CURRENTLY SELECTED</div>' : ''}
+            ${isSelected ? '<div style="font-size:0.75rem;color:var(--level-4);font-family:var(--font-mono)">CURRENTLY SELECTED</div>' : ''}
           </div>
         </div>
         <div style="font-size:0.87rem;color:var(--text-secondary);line-height:1.7;padding-left:44px">${sub.levels[lvl] || ''}</div>

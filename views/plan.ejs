@@ -74,7 +74,7 @@
           <% if (current) { %>
           <%- include('partials/level-badge', { level: current }) %>
           <% } else { %>
-          <a href="/assess?cap=<%= activeCap %>" class="btn btn-sm btn-ghost" style="font-size:0.67rem">SET IN ASSESS &rarr;</a>
+          <a href="/assess?cap=<%= activeCap %>" class="btn btn-sm btn-ghost" style="font-size:0.75rem">SET IN ASSESS &rarr;</a>
           <% } %>
         </div>
         <div>
@@ -105,9 +105,9 @@
       <div class="mb-14">
         <div class="flex items-center justify-between mb-12">
           <div>
-            <div class="mono" style="font-size:0.73rem;color:var(--accent);letter-spacing:0.1em;font-weight:700">MILESTONES & ACTIVITIES</div>
+            <div class="mono" style="font-size:0.8rem;color:var(--accent);letter-spacing:0.1em;font-weight:700">MILESTONES & ACTIVITIES</div>
             <% if (current && target) { %>
-            <div class="mono text-dim" style="font-size:0.67rem;margin-top:3px">
+            <div class="mono text-dim" style="font-size:0.75rem;margin-top:3px">
               Steps to move from <span style="color:<%= levelColors[current] %>">L<%= current %> <%= levelNames[current] %></span> → <span style="color:<%= levelColors[target] %>">L<%= target %> <%= levelNames[target] %></span>
             </div>
             <% } %>
@@ -127,15 +127,15 @@
             </div>
             <% scoreMilestones.forEach((m, idx) => { %>
             <div class="milestone-row" data-milestone-id="<%= m.id %>">
-              <div class="mono text-dim" style="font-size:0.73rem;padding-top:8px"><%= idx + 1 %></div>
+              <div class="mono text-dim" style="font-size:0.8rem;padding-top:8px"><%= idx + 1 %></div>
               <textarea class="milestone-input" placeholder="e.g. Conduct needs assessment and gap analysis"
                 onchange="updateMilestone(<%= m.id %>, 'activity', this.value)" style="resize:none;min-height:36px;line-height:1.5"><%= m.activity || '' %></textarea>
-              <input class="milestone-input mono" style="font-size:0.73rem" placeholder="e.g. CEO"
+              <input class="milestone-input mono" style="font-size:0.8rem" placeholder="e.g. CEO"
                 value="<%= m.owner || '' %>" onchange="updateMilestone(<%= m.id %>, 'owner', this.value)">
-              <input type="date" class="milestone-input mono" style="font-size:0.73rem"
+              <input type="date" class="milestone-input mono" style="font-size:0.8rem"
                 value="<%= m.target_date ? new Date(m.target_date).toISOString().split('T')[0] : '' %>"
                 onchange="updateMilestone(<%= m.id %>, 'targetDate', this.value)">
-              <select class="form-select" style="padding:5px 8px;font-size:0.73rem;width:100%;border-color:<%= m.status === 'Done' ? 'var(--level-4)' : m.status === 'In Progress' ? 'var(--accent-blue)' : m.status === 'Blocked' ? 'var(--level-1)' : 'var(--border)' %>44"
+              <select class="form-select" style="padding:5px 8px;font-size:0.8rem;width:100%;border-color:<%= m.status === 'Done' ? 'var(--level-4)' : m.status === 'In Progress' ? 'var(--accent-blue)' : m.status === 'Blocked' ? 'var(--level-1)' : 'var(--border)' %>44"
                 onchange="updateMilestone(<%= m.id %>, 'status', this.value)">
                 <% for (const st of ['Pending', 'In Progress', 'Done', 'Blocked']) { %>
                 <option value="<%= st %>" <%= m.status === st ? 'selected' : '' %>><%= st %></option>
@@ -159,22 +159,22 @@
 
       <!-- Timeline -->
       <div class="card-dark" style="border-color:var(--border-accent)">
-        <div class="mono" style="font-size:0.73rem;color:var(--accent-blue);letter-spacing:0.1em;margin-bottom:12px">TIMELINE & OWNERSHIP</div>
+        <div class="mono" style="font-size:0.8rem;color:var(--accent-blue);letter-spacing:0.1em;margin-bottom:12px">TIMELINE & OWNERSHIP</div>
         <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:12px">
           <div>
-            <div class="form-label" style="font-size:0.67rem">START DATE</div>
+            <div class="form-label" style="font-size:0.75rem">START DATE</div>
             <input type="date" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
               value="<%= score?.timeline_start ? new Date(score.timeline_start).toISOString().split('T')[0] : '' %>"
               onchange="saveTimeline('<%= sub.id %>', 'timelineStart', this.value)">
           </div>
           <div>
-            <div class="form-label" style="font-size:0.67rem">END DATE</div>
+            <div class="form-label" style="font-size:0.75rem">END DATE</div>
             <input type="date" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
               value="<%= score?.timeline_end ? new Date(score.timeline_end).toISOString().split('T')[0] : '' %>"
               onchange="saveTimeline('<%= sub.id %>', 'timelineEnd', this.value)">
           </div>
           <div>
-            <div class="form-label" style="font-size:0.67rem">RESPONSIBLE PERSON</div>
+            <div class="form-label" style="font-size:0.75rem">RESPONSIBLE PERSON</div>
             <input type="text" class="form-input mono" style="font-size:0.8rem;padding:9px 12px"
               placeholder="e.g. Programme Director"
               value="<%= score?.timeline_owner || '' %>"
@@ -194,7 +194,7 @@
       <div class="modal-content" onclick="event.stopPropagation()">
         <div style="padding:24px 28px;border-bottom:1px solid var(--border)" class="flex justify-between items-start">
           <div>
-            <div class="mono text-muted" style="font-size:0.73rem;letter-spacing:0.12em;margin-bottom:4px">LEVEL DESCRIPTIONS</div>
+            <div class="mono text-muted" style="font-size:0.8rem;letter-spacing:0.12em;margin-bottom:4px">LEVEL DESCRIPTIONS</div>
             <h2 id="modal-sub-name" style="font-size:1.2rem"></h2>
             <div id="modal-dei-tag"></div>
           </div>
@@ -202,7 +202,7 @@
         </div>
         <div id="modal-levels" style="padding:28px"></div>
         <div style="padding:16px 28px;border-top:1px solid var(--border);text-align:center">
-          <div class="mono text-dim" style="font-size:0.73rem">Click any level to select · Source: Bridgespan Group OD Assessment Guide</div>
+          <div class="mono text-dim" style="font-size:0.8rem">Click any level to select · Source: Bridgespan Group OD Assessment Guide</div>
         </div>
       </div>
     </div>

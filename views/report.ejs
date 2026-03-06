@@ -70,7 +70,7 @@
     <!-- Header -->
     <div class="flex justify-between items-start mb-32 flex-wrap gap-16">
       <div>
-        <div class="mono text-muted" style="font-size:0.73rem;letter-spacing:0.12em;margin-bottom:6px">OD ASSESSMENT REPORT</div>
+        <div class="mono text-muted" style="font-size:0.8rem;letter-spacing:0.12em;margin-bottom:6px">OD ASSESSMENT REPORT</div>
         <h1 style="margin-bottom:4px"><%= assessment.org_name || 'Organisation' %></h1>
         <div class="mono text-muted" style="font-size:0.87rem">Assessed by <%= assessment.assessor || '—' %> · <%= assessment.assessment_date ? new Date(assessment.assessment_date).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '' %></div>
         <% if (assessment.context_notes) { %>
@@ -107,7 +107,7 @@
         <div id="radar-chart" style="text-align:center"></div>
         <div class="flex flex-wrap gap-12" style="margin-top:12px">
           <% for (const cap of capabilities) { %>
-          <div class="flex gap-4 items-center mono" style="font-size:0.6rem;color:var(--text-dim)">
+          <div class="flex gap-4 items-center mono" style="font-size:0.7rem;color:var(--text-dim)">
             <span><%= cap.icon %></span><%= cap.id %>. <%= cap.name.split(' ')[0] %>
           </div>
           <% } %>
@@ -123,7 +123,7 @@
               <span style="font-size:0.8rem;color:var(--text-secondary)"><%= cs.name %></span>
             </div>
             <div class="flex gap-8 items-center">
-              <span class="mono text-dim" style="font-size:0.67rem"><%= cs.rated %>/<%= cs.subcapabilities.length %></span>
+              <span class="mono text-dim" style="font-size:0.75rem"><%= cs.rated %>/<%= cs.subcapabilities.length %></span>
               <% if (cs.avg) { %>
               <span class="mono" style="font-size:0.87rem;font-weight:800;color:<%= levelColors[Math.round(cs.avg)] %>"><%= cs.avg.toFixed(1) %></span>
               <% } %>
@@ -140,7 +140,7 @@
     <!-- Strengths & Gaps -->
     <div class="grid grid-2 gap-16 mb-28">
       <div class="card" style="border-color:var(--level-4-bg)">
-        <div class="mono mb-16" style="font-size:0.73rem;color:var(--level-4);letter-spacing:0.1em">✓ STRENGTHS (Level 3–4)</div>
+        <div class="mono mb-16" style="font-size:0.8rem;color:var(--level-4);letter-spacing:0.1em">✓ STRENGTHS (Level 3–4)</div>
         <% if (strengths.length === 0) { %>
         <div class="text-dim" style="font-size:0.87rem">No Level 3–4 scores yet. Complete the assessment.</div>
         <% } %>
@@ -154,7 +154,7 @@
         <% } %>
       </div>
       <div class="card" style="border-color:var(--level-1-bg)">
-        <div class="mono mb-16" style="font-size:0.73rem;color:var(--level-1);letter-spacing:0.1em">⚠ TOP GAPS (Level 1–2)</div>
+        <div class="mono mb-16" style="font-size:0.8rem;color:var(--level-1);letter-spacing:0.1em">⚠ TOP GAPS (Level 1–2)</div>
         <% if (gaps.length === 0) { %>
         <div class="text-dim" style="font-size:0.87rem">No gaps identified yet.</div>
         <% } %>
@@ -166,7 +166,7 @@
           <div style="font-size:0.8rem;color:var(--text-secondary)"><span class="mr-6"><%= cap.icon %></span><%= s.name %></div>
           <div class="flex gap-8 items-center">
             <%- include('partials/level-badge', { level: scores[s.id].current_level, size: 'sm' }) %>
-            <span class="mono" style="font-size:0.67rem;color:var(--level-1)">gap <%= gap %></span>
+            <span class="mono" style="font-size:0.75rem;color:var(--level-1)">gap <%= gap %></span>
           </div>
         </div>
         <% } %>
@@ -176,7 +176,7 @@
     <!-- Gantt Chart -->
     <% if (ganttItems.length > 0) { %>
     <div class="card mb-28" style="border-color:var(--border-accent)">
-      <div class="mono mb-20" style="font-size:0.73rem;color:var(--accent-blue);letter-spacing:0.1em">📅 IMPLEMENTATION TIMELINE — GANTT VIEW</div>
+      <div class="mono mb-20" style="font-size:0.8rem;color:var(--accent-blue);letter-spacing:0.1em">📅 IMPLEMENTATION TIMELINE — GANTT VIEW</div>
       <div id="gantt-chart"></div>
     </div>
     <% } %>
@@ -199,8 +199,8 @@
               const pc = sc.priority ? priorityConfig[sc.priority] : null;
             %>
             <tr>
-              <td class="mono text-dim" style="font-size:0.73rem"><%= i + 1 %></td>
-              <td class="whitespace-nowrap"><span style="color:<%= item.cap.color %>" class="mr-6"><%= item.cap.icon %></span><span class="text-muted" style="font-size:0.73rem"><%= item.cap.name.split(' ')[0] %></span></td>
+              <td class="mono text-dim" style="font-size:0.8rem"><%= i + 1 %></td>
+              <td class="whitespace-nowrap"><span style="color:<%= item.cap.color %>" class="mr-6"><%= item.cap.icon %></span><span class="text-muted" style="font-size:0.8rem"><%= item.cap.name.split(' ')[0] %></span></td>
               <td style="color:var(--text-secondary);font-weight:600;white-space:nowrap">
                 <%= item.name %>
                 <% if (item.is_dei) { %><span class="tag tag-dei" style="margin-left:6px">DEI</span><% } %>
@@ -208,10 +208,10 @@
               <td><%- include('partials/level-badge', { level: sc.current_level, size: 'sm' }) %></td>
               <td><%- include('partials/level-badge', { level: sc.target_level, size: 'sm' }) %></td>
               <td class="mono" style="font-size:0.8rem;color:<%= gap > 0 ? 'var(--level-4)' : gap < 0 ? 'var(--level-1)' : 'var(--text-dim)' %>"><%= gap !== null ? (gap > 0 ? '+'+gap : gap) : '—' %></td>
-              <td class="whitespace-nowrap"><% if (pc) { %><span class="mono" style="font-size:0.73rem;font-weight:700;color:<%= pc.color %>"><%= pc.icon %> <%= sc.priority %></span><% } %></td>
+              <td class="whitespace-nowrap"><% if (pc) { %><span class="mono" style="font-size:0.8rem;font-weight:700;color:<%= pc.color %>"><%= pc.icon %> <%= sc.priority %></span><% } %></td>
               <td class="mono text-muted" style="font-size:0.8rem;white-space:nowrap"><%= sc.timeline_owner || '—' %></td>
-              <td class="mono text-muted" style="font-size:0.73rem;white-space:nowrap"><%= sc.timeline_start ? new Date(sc.timeline_start).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : '—' %></td>
-              <td class="mono text-muted" style="font-size:0.73rem;white-space:nowrap"><%= sc.timeline_end ? new Date(sc.timeline_end).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : '—' %></td>
+              <td class="mono text-muted" style="font-size:0.8rem;white-space:nowrap"><%= sc.timeline_start ? new Date(sc.timeline_start).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : '—' %></td>
+              <td class="mono text-muted" style="font-size:0.8rem;white-space:nowrap"><%= sc.timeline_end ? new Date(sc.timeline_end).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : '—' %></td>
               <td style="min-width:200px;max-width:260px">
                 <% if (sc.resources) { %>
                 <div class="flex flex-wrap gap-4">

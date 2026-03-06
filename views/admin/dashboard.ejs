@@ -18,7 +18,7 @@
     <div class="flex items-center gap-14">
       <div style="width:36px;height:36px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:1.07rem">♿</div>
       <div>
-        <div class="mono" style="font-size:0.6rem;color:var(--accent);letter-spacing:0.2em">APD · OD TOOL</div>
+        <div class="mono" style="font-size:0.7rem;color:var(--accent);letter-spacing:0.2em">APD · OD TOOL</div>
         <div style="font-size:1.07rem;font-weight:800;color:var(--text-primary)">Admin Dashboard</div>
       </div>
     </div>
@@ -28,7 +28,7 @@
   <div style="padding:40px;max-width:960px;margin:0 auto">
     <div class="flex justify-between items-center mb-28">
       <div>
-        <div class="mono text-dim" style="font-size:0.73rem;letter-spacing:0.12em;margin-bottom:4px">PARTNER NGO OVERVIEW</div>
+        <div class="mono text-dim" style="font-size:0.8rem;letter-spacing:0.12em;margin-bottom:4px">PARTNER NGO OVERVIEW</div>
         <h1>All Organisations</h1>
       </div>
       <a href="/admin/submissions" class="btn btn-primary">VIEW ALL SUBMISSIONS &rarr;</a>
@@ -50,21 +50,21 @@
         <div class="flex justify-between items-start mb-14">
           <div>
             <div style="font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:4px"><%= org.org_name %></div>
-            <div class="mono text-dim" style="font-size:0.73rem"><%= org.email %></div>
+            <div class="mono text-dim" style="font-size:0.8rem"><%= org.email %></div>
           </div>
           <% if (avgScore) { %>
           <span class="mono" style="font-size:1.2rem;font-weight:800;color:<%= avgColor %>"><%= avgScore.toFixed(1) %></span>
           <% } %>
         </div>
         <div class="mb-10">
-          <div class="flex justify-between mono text-dim" style="font-size:0.67rem;margin-bottom:5px">
+          <div class="flex justify-between mono text-dim" style="font-size:0.75rem;margin-bottom:5px">
             <span>Assessment Progress</span><span><%= org.rated_count || 0 %>/<%= totalSubCount %> rated</span>
           </div>
           <div class="progress-bar">
             <div class="progress-bar-fill" style="width:<%= pct %>%;background:<%= pct === 100 ? 'var(--level-4)' : pct > 50 ? 'var(--level-3)' : 'var(--accent)' %>"></div>
           </div>
         </div>
-        <div class="mono" style="font-size:0.67rem;color:var(--accent);font-weight:700">VIEW ASSESSMENT →</div>
+        <div class="mono" style="font-size:0.75rem;color:var(--accent);font-weight:700">VIEW ASSESSMENT →</div>
       </a>
       <% } %>
     </div>
